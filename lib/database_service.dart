@@ -17,8 +17,6 @@ class DatabaseService {
   }
 
   Profile _profileFromSnapshot(DocumentSnapshot snapshot) {
-    print("hello");
-    print(snapshot.data());
     return Profile(
       name: snapshot.get('name') ?? '',
       age: snapshot.get('age') ?? 0,

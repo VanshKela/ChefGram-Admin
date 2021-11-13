@@ -1,4 +1,3 @@
-import 'package:chef_gram_admin/models/profile_model.dart';
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
 
@@ -14,9 +13,6 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<Profile>(context).role == "employee")
-      return NotAnAdmin();
-    else
       return Scaffold(
         appBar: AppBar(
           title: Text('Dashboard'),
