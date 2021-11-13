@@ -10,7 +10,7 @@ class DatabaseService {
   });
 
   static CollectionReference _profileCollection =
-  FirebaseFirestore.instance.collection('users');
+      FirebaseFirestore.instance.collection('users');
 
   Stream<Profile> get profile {
     return _profileCollection.doc(uid).snapshots().map(_profileFromSnapshot);
@@ -34,12 +34,14 @@ class DatabaseService {
       var querySnapshot = await collection.get();
       for (var queryDocumentSnapshot in querySnapshot.docs) {
         Map<String, dynamic> data = queryDocumentSnapshot.data();
-        catalog.add({
-          "name": data["name"],
-          "price": data["price"],
-          "quantity": data["quantity"],
-          "image": data["image"]
-        });
+        catalog.add(
+          {
+            "name": data["name"],
+            "price": data["price"],
+            "quantity": data["quantity"],
+            "image": data["image"]
+          },
+        );
       }
       return catalog;
     } else
