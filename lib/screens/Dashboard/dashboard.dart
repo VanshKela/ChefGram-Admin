@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../authentication_service.dart';
+import 'add_to_catalog.dart';
 import 'catalog.dart';
 
 class Dashboard extends StatefulWidget {
@@ -16,14 +17,6 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     List<ElevatedButton> buttons = [
-      ElevatedButton(
-        child: Text(
-          "Add new item to catalog",
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold),
-        ),
-        onPressed: () {},
-      ),
       ElevatedButton(
         child: Text(
           "Show Catalog",
@@ -72,8 +65,8 @@ class _DashboardState extends State<Dashboard> {
           height: 40.h,
           child: GridView.count(
             primary: false,
-            childAspectRatio: (1 / .6),
-            crossAxisCount: 2,
+            childAspectRatio: (1 / .2),
+            crossAxisCount: 1,
             padding: const EdgeInsets.all(20),
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,

@@ -1,10 +1,12 @@
 import 'package:chef_gram_admin/models/orderModel.dart';
 import 'package:chef_gram_admin/models/profile_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../database_service.dart';
+import 'add_to_catalog.dart';
 
 class Catalog extends StatelessWidget {
   const Catalog({Key? key}) : super(key: key);
@@ -12,6 +14,24 @@ class Catalog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.indigo,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddToCatalog()),
+          );
+        },
+        label: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 4.0),
+              child: Icon(Icons.add),
+            ),
+            Text("Add Item")
+          ],
+        ),
+      ),
       backgroundColor: Colors.indigo.shade50,
       appBar: AppBar(
         title: Text("View Catalog"),
@@ -53,63 +73,81 @@ class Catalog extends StatelessWidget {
                           itemBuilder: (BuildContext context, int index) {
                             var document = snapshot.data[index];
 
-                            return Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 2.w, vertical: 1.h),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white70,
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 1.h, horizontal: 1.w),
-                                  child: Row(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        child: Image.network(
-                                          document['image'],
-                                          height: 20.h,
-                                          width: 30.w,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: EdgeInsets.only(left: 2.w),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                document['name'],
-                                                style: TextStyle(
-                                                    fontSize: 18.sp,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              SizedBox(
-                                                height: 2.h,
-                                              ),
-                                              Text(
-                                                "${document['quantity']} g",
-                                                style:
-                                                    TextStyle(fontSize: 16.sp),
-                                              ),
-                                              SizedBox(
-                                                height: 2.h,
-                                              ),
-                                              Text(
-                                                "₹ ${document['price']}",
-                                                style:
-                                                    TextStyle(fontSize: 16.sp),
-                                              )
-                                            ],
+                            return Slidable(
+                              actionPane: SlidableDrawerActionPane(),
+                              actionExtentRatio: 0.25,
+                              secondaryActions: [
+                                IconSlideAction(
+                                  caption: 'Edit',
+                                  color: Colors.deepPurple,
+                                  icon: Icons.edit,
+                                  onTap: () {},
+                                ),
+                                IconSlideAction(
+                                  caption: 'Delete',
+                                  color: Colors.red,
+                                  icon: Icons.delete,
+                                  onTap: () {},
+                                ),
+                              ],
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 2.w, vertical: 1.h),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white70,
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 1.h, horizontal: 1.w),
+                                    child: Row(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          child: Image.network(
+                                            document['image'],
+                                            height: 20.h,
+                                            width: 30.w,
+                                            fit: BoxFit.cover,
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                        Expanded(
+                                          child: Padding(
+                                            padding: EdgeInsets.only(left: 2.w),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  document['name'],
+                                                  style: TextStyle(
+                                                      fontSize: 18.sp,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                SizedBox(
+                                                  height: 2.h,
+                                                ),
+                                                Text(
+                                                  "${document['quantity']} g",
+                                                  style: TextStyle(
+                                                      fontSize: 16.sp),
+                                                ),
+                                                SizedBox(
+                                                  height: 2.h,
+                                                ),
+                                                Text(
+                                                  "₹ ${document['price']}",
+                                                  style: TextStyle(
+                                                      fontSize: 16.sp),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
