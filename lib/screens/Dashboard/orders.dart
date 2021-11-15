@@ -16,6 +16,34 @@ class Orders extends StatefulWidget {
 }
 
 class _OrdersState extends State<Orders> {
+  Stream<QuerySnapshot<Map<String, dynamic>>> getStream() {
+    if (state == null) {
+      return FirebaseFirestore.instance.collection('orders').snapshots();
+    } else {
+      if (city == null) {
+        return FirebaseFirestore.instance
+            .collection('orders')
+            .where('state', isEqualTo: state)
+            .snapshots();
+      } else {
+        if (beat == null) {
+          return FirebaseFirestore.instance
+              .collection('orders')
+              .where('state', isEqualTo: state)
+              .where('city', isEqualTo: city)
+              .snapshots();
+        } else {
+          return FirebaseFirestore.instance
+              .collection('orders')
+              .where('state', isEqualTo: state)
+              .where('city', isEqualTo: city)
+              .where('beat', isEqualTo: beat)
+              .snapshots();
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -33,12 +61,13 @@ class _OrdersState extends State<Orders> {
           ),
         ),
         body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('orders').snapshots(),
+          stream: getStream(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {
               return CircularProgressIndicator();
             }
+            print("Length: ${snapshot.data!.docs.length}");
             return Container(
               child: (snapshot.data!.docs.length == 0)
                   ? Center(
@@ -64,6 +93,7 @@ class _OrdersState extends State<Orders> {
 
 class SingleOrderWidget extends StatelessWidget {
   SingleOrderWidget({required this.order});
+
   var order;
 
   @override
