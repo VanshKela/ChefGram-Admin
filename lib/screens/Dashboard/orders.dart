@@ -67,7 +67,6 @@ class _OrdersState extends State<Orders> {
             if (!snapshot.hasData) {
               return CircularProgressIndicator();
             }
-            print("Length: ${snapshot.data!.docs.length}");
             return Container(
               child: (snapshot.data!.docs.length == 0)
                   ? Center(
@@ -227,10 +226,8 @@ class _FilterPageState extends State<FilterPage> {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        SizedBox(
-          height: 6.h,
-        ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 4.w),
           child: Row(
@@ -342,7 +339,9 @@ class _FilterPageState extends State<FilterPage> {
               },
             ),
             ElevatedButton(
-              child: const Text('Close BottomSheet'),
+              child: const Text('Apply Filter'),
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.green)),
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pushReplacement(
