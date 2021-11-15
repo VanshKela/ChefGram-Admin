@@ -5,34 +5,34 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import '../../constants.dart';
+import '../../database_service.dart';
 
-class AddToCatalog extends StatefulWidget {
-  const AddToCatalog({Key? key}) : super(key: key);
+
+class EditCatalogItem extends StatefulWidget {
+  const EditCatalogItem({Key? key, required this.data}) : super(key: key);
+  final Map data;
 
   @override
-  _AddToCatalogState createState() => _AddToCatalogState();
+  _EditCatalogItemState createState() => _EditCatalogItemState();
 }
 
-class _AddToCatalogState extends State<AddToCatalog> {
+class _EditCatalogItemState extends State<EditCatalogItem> {
   final ImagePicker _picker = ImagePicker();
   XFile? image = null;
   Uint8List? fileBytes;
-  final priceController = TextEditingController();
-  final quantityController = TextEditingController();
-  final nameController = TextEditingController();
+  late final priceController;
+  late final quantityController;
+  late final nameController;
   CollectionReference catalog =
-      FirebaseFirestore.instance.collection('catalog');
-
-  // FilePickerResult? result;
+  FirebaseFirestore.instance.collection('catalog');
   Future selectFile() async {
-    final XFile? pickedFile =
-        await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     setState(() {
       image = pickedFile;
     });
-    // result = await FilePicker.platform.pickFiles(withData: true);
   }
 
   Future addToCatalog() async {
@@ -48,7 +48,7 @@ class _AddToCatalogState extends State<AddToCatalog> {
           .getDownloadURL();
       print(imageLink);
 
-      return catalog.doc(fileName).set({
+      return catalog.doc(widget.data['id'].toString()).update({
         'name': nameController.value.text,
         'quantity': int.parse(quantityController.value.text),
         'price': int.parse(priceController.value.text),
@@ -59,7 +59,25 @@ class _AddToCatalogState extends State<AddToCatalog> {
         quantityController.clear();
         image = null;
       });
+    } else {
+      return catalog.doc(widget.data['id'].toString()).update({
+        'name': nameController.value.text,
+        'quantity': int.parse(quantityController.value.text),
+        'price': int.parse(priceController.value.text),
+      }).then((value) {
+        priceController.clear();
+        nameController.clear();
+        quantityController.clear();
+      });
     }
+  }
+
+  @override
+  void initState() {
+    print(widget.data);
+    nameController = TextEditingController(text: widget.data['name']);
+    priceController = TextEditingController(text: widget.data['price'].toString());
+    quantityController = TextEditingController(text: widget.data['quantity'].toString());
   }
 
   @override
@@ -67,7 +85,7 @@ class _AddToCatalogState extends State<AddToCatalog> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Add To Catalog"),
+          title: Text("Edit Item"),
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -127,9 +145,7 @@ class _AddToCatalogState extends State<AddToCatalog> {
                 Container(
                   height: 30.h,
                   width: 30.h,
-                  child: (image == null)
-                      ? Text('No Image Selected')
-                      : Image.file(File(image!.path)),
+                  child: (image == null) ? Image.network(widget.data['image']) : Image.file(File(image!.path)),
                 ),
                 Align(
                   alignment: Alignment.center,
@@ -139,7 +155,7 @@ class _AddToCatalogState extends State<AddToCatalog> {
                       addToCatalog();
                       Navigator.pop(context, true);
                     },
-                    text: "Add To Cart",
+                    text: "Edit",
                   ),
                 ),
               ],

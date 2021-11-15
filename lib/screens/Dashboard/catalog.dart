@@ -6,6 +6,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../database_service.dart';
 import 'add_to_catalog.dart';
+import 'edit_catalog_item.dart';
 
 class Catalog extends StatelessWidget {
   const Catalog({Key? key}) : super(key: key);
@@ -78,7 +79,12 @@ class Catalog extends StatelessWidget {
                                   caption: 'Edit',
                                   color: Colors.deepPurple,
                                   icon: Icons.edit,
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => EditCatalogItem(data: document)),
+                                    );
+                                  },
                                 ),
                                 IconSlideAction(
                                   caption: 'Delete',
