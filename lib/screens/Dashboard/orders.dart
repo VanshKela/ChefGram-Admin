@@ -18,28 +18,30 @@ class Orders extends StatefulWidget {
 
 class _OrdersState extends State<Orders> {
   Stream<QuerySnapshot<Map<String, dynamic>>> getStream() {
-    Query<Map<String, dynamic>> query = FirebaseFirestore.instance.collection('orders');
+    Query<Map<String, dynamic>> query =
+        FirebaseFirestore.instance.collection('orders');
+
     if (employee != null) {
       query = query.where('orderTakenBy', isEqualTo: employee);
     }
     if (state == null) {
-      return query.snapshots();
+      return query.limit(10).snapshots();
     } else {
       if (city == null) {
-        return query
-            .where('state', isEqualTo: state)
-            .snapshots();
+        return query.where('state', isEqualTo: state).limit(10).snapshots();
       } else {
         if (beat == null) {
           return query
               .where('state', isEqualTo: state)
               .where('city', isEqualTo: city)
+              .limit(10)
               .snapshots();
         } else {
           return query
               .where('state', isEqualTo: state)
               .where('city', isEqualTo: city)
               .where('beat', isEqualTo: beat)
+              .limit(10)
               .snapshots();
         }
       }
@@ -50,6 +52,9 @@ class _OrdersState extends State<Orders> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: Text("Order History"),
+        ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             showModalBottomSheet(
