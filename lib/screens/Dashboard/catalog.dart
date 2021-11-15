@@ -13,6 +13,54 @@ class Catalog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void _showDialog(String name, var data) async {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              "Delete Item Confirmation",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text("This will delete:",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    name,
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              ElevatedButton(
+                child: Text("Close"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              ElevatedButton(
+                child: Text("Confirm"),
+                onPressed: () async {
+                  data.delete().then((value) {
+                    Provider.of<DatabaseService>(context, listen: false)
+                        .catalog
+                        .clear();
+                    Navigator.pop(context);
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => Catalog()));
+                  });
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.indigo,
@@ -40,7 +88,9 @@ class Catalog extends StatelessWidget {
             style: ButtonStyle(elevation: MaterialStateProperty.all(0.0)),
             child: Icon(Icons.refresh),
             onPressed: () {
-              Provider.of<DatabaseService>(context, listen: false).catalog.clear();
+              Provider.of<DatabaseService>(context, listen: false)
+                  .catalog
+                  .clear();
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -82,7 +132,9 @@ class Catalog extends StatelessWidget {
                                   onTap: () {
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => EditCatalogItem(data: document)),
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              EditCatalogItem(data: document)),
                                     );
                                   },
                                 ),
@@ -91,13 +143,11 @@ class Catalog extends StatelessWidget {
                                   color: Colors.red,
                                   icon: Icons.delete,
                                   onTap: () async {
-                                    await FirebaseFirestore.instance.collection('catalog').doc(document['id'].toString()).delete().then((value) {
-                                      Provider.of<DatabaseService>(context, listen: false).catalog.clear();
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (BuildContext context) => Catalog()));
-                                    });
+                                    var data = await FirebaseFirestore.instance
+                                        .collection('catalog')
+                                        .doc(document['id'].toString());
+                                    _showDialog(
+                                        snapshot.data[index]['name'], data);
                                   },
                                 ),
                               ],
