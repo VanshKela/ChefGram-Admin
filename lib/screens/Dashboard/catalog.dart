@@ -69,6 +69,7 @@ class Catalog extends StatelessWidget {
                       children: [
                         ListView.builder(
                           shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
                           itemCount: snapshot.data.length,
                           itemBuilder: (BuildContext context, int index) {
                             var document = snapshot.data[index];

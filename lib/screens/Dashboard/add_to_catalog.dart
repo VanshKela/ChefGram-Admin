@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
 import '../../constants.dart';
-import 'package:file_picker/file_picker.dart';
 
 
 class AddToCatalog extends StatefulWidget {
