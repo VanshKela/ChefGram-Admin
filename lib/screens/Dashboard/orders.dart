@@ -7,6 +7,7 @@ import 'order_summary.dart';
 var state;
 var city;
 var beat;
+var employee;
 
 class Orders extends StatefulWidget {
   const Orders({Key? key}) : super(key: key);
@@ -17,24 +18,25 @@ class Orders extends StatefulWidget {
 
 class _OrdersState extends State<Orders> {
   Stream<QuerySnapshot<Map<String, dynamic>>> getStream() {
+    Query<Map<String, dynamic>> query = FirebaseFirestore.instance.collection('orders');
+    if (employee != null) {
+      query = query.where('orderTakenBy', isEqualTo: employee);
+    }
     if (state == null) {
-      return FirebaseFirestore.instance.collection('orders').snapshots();
+      return query.snapshots();
     } else {
       if (city == null) {
-        return FirebaseFirestore.instance
-            .collection('orders')
+        return query
             .where('state', isEqualTo: state)
             .snapshots();
       } else {
         if (beat == null) {
-          return FirebaseFirestore.instance
-              .collection('orders')
+          return query
               .where('state', isEqualTo: state)
               .where('city', isEqualTo: city)
               .snapshots();
         } else {
-          return FirebaseFirestore.instance
-              .collection('orders')
+          return query
               .where('state', isEqualTo: state)
               .where('city', isEqualTo: city)
               .where('beat', isEqualTo: beat)
@@ -177,6 +179,21 @@ class _FilterPageState extends State<FilterPage> {
   List<String> beats = [];
   List<String> stateList = [];
   List<String> cityList = [];
+  List<String> empList = [];
+
+  void getEmpList() async {
+    List<String> _empList = [];
+    var userRef = await FirebaseFirestore.instance
+        .collection('users')
+        .where('role', isEqualTo: 'employee')
+        .get();
+    userRef.docs.forEach((element) {
+      _empList.add(element.get('name'));
+    });
+    setState(() {
+      empList = _empList;
+    });
+  }
 
   void getStates() async {
     List<String> _stateList = [];
@@ -219,6 +236,7 @@ class _FilterPageState extends State<FilterPage> {
   @override
   void initState() {
     getStates();
+    getEmpList();
     super.initState();
   }
 
@@ -228,6 +246,35 @@ class _FilterPageState extends State<FilterPage> {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 4.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Select Employee:",
+                style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
+              ),
+              DropdownButton<String>(
+                value: employee,
+                icon: Icon(Icons.keyboard_arrow_down),
+                iconSize: 28,
+                elevation: 20,
+                onChanged: (String? newval) {
+                  setState(() {
+                    employee = newval;
+                  });
+                },
+                items: empList.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 4.w),
           child: Row(
