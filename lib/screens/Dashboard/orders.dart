@@ -2,19 +2,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
-class Orders extends StatefulWidget {
-  const Orders({Key? key}) : super(key: key);
+var state;
+var city;
+var beat;
+
+class FilterPage extends StatefulWidget {
+  const FilterPage({Key? key}) : super(key: key);
 
   @override
-  _OrdersState createState() => _OrdersState();
+  _FilterPageState createState() => _FilterPageState();
 }
 
-class _OrdersState extends State<Orders> {
+class _FilterPageState extends State<FilterPage> {
   static CollectionReference stateCollection =
       FirebaseFirestore.instance.collection('states');
-  var state;
-  var city;
-  var beat;
+
   bool applyFilter = false;
 
   List<String> beats = [];
@@ -67,25 +69,6 @@ class _OrdersState extends State<Orders> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Container(
-          width: 100.w,
-          child: applyFilter
-              ? Filter()
-              : ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      applyFilter = !applyFilter;
-                    });
-                  },
-                  child: Text("Apply Filter")),
-        ),
-      ),
-    );
-  }
-
-  Column Filter() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -194,6 +177,44 @@ class _OrdersState extends State<Orders> {
             },
             child: Text("Remove Filter")),
       ],
+    );
+  }
+}
+
+class Orders extends StatefulWidget {
+  const Orders({Key? key}) : super(key: key);
+
+  @override
+  _OrdersState createState() => _OrdersState();
+}
+
+class _OrdersState extends State<Orders> {
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
+          children: [
+            Container(
+              width: 100.w,
+              child: Container(
+                height: 10.h,
+                child: ElevatedButton(
+                  child: Text("Apply Filter"),
+                  onPressed: () {
+                    showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return FilterPage();
+                        });
+                  },
+                ),
+              ),
+            ),
+            Text("Heelo"),
+          ],
+        ),
+      ),
     );
   }
 }
