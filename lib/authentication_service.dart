@@ -18,7 +18,7 @@ class AuthenticationService with ChangeNotifier {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(
           email: "$name@spice.com", password: password);
-      DocumentSnapshot ds = await FirebaseFirestore.instance.collection("users")
+      await FirebaseFirestore.instance.collection("users")
           .doc(_firebaseAuth.currentUser!.uid).get()
           .then((value) {
         print(value.exists);

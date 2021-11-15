@@ -1,11 +1,14 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:chef_gram_admin/utils/RoundedButton.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
 import '../../constants.dart';
 import 'package:file_picker/file_picker.dart';
+
 
 class AddToCatalog extends StatefulWidget {
   const AddToCatalog({Key? key}) : super(key: key);
@@ -15,20 +18,27 @@ class AddToCatalog extends StatefulWidget {
 }
 
 class _AddToCatalogState extends State<AddToCatalog> {
+  final ImagePicker _picker = ImagePicker();
+  XFile? image = null;
+  Uint8List? fileBytes;
   final priceController = TextEditingController();
   final quantityController = TextEditingController();
   final nameController = TextEditingController();
   CollectionReference catalog =
       FirebaseFirestore.instance.collection('catalog');
-  FilePickerResult? result;
+  // FilePickerResult? result;
   Future selectFile() async {
-    result = await FilePicker.platform.pickFiles(withData: true);
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      image = pickedFile;
+    });
+    // result = await FilePicker.platform.pickFiles(withData: true);
   }
 
   Future addToCatalog() async {
-    if (result != null) {
-      Uint8List? fileBytes = result!.files.first.bytes;
-      String fileName = result!.files.first.name;
+    if (image != null) {
+      fileBytes = await image!.readAsBytes();
+      String fileName = image!.name;
       // Upload file
       await FirebaseStorage.instance
           .ref('catalog/$fileName')
@@ -47,7 +57,7 @@ class _AddToCatalogState extends State<AddToCatalog> {
         priceController.clear();
         nameController.clear();
         quantityController.clear();
-        result = null;
+        image = null;
       });
     }
     Navigator.pop(context);
@@ -121,6 +131,11 @@ class _AddToCatalogState extends State<AddToCatalog> {
                 ),
                 SizedBox(
                   height: 2.h,
+                ),
+                Container(
+                  height: 30.h,
+                  width: 30.h,
+                  child: (image == null) ? Text('No Image Selected') : Image.file(File(image!.path)),
                 ),
                 Align(
                   alignment: Alignment.center,
