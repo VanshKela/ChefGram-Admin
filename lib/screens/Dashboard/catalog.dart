@@ -1,5 +1,4 @@
-import 'package:chef_gram_admin/models/orderModel.dart';
-import 'package:chef_gram_admin/models/profile_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
@@ -40,9 +39,7 @@ class Catalog extends StatelessWidget {
             style: ButtonStyle(elevation: MaterialStateProperty.all(0.0)),
             child: Icon(Icons.refresh),
             onPressed: () {
-              Provider.of<DatabaseService>(context, listen: false)
-                  .catalog
-                  .clear();
+              Provider.of<DatabaseService>(context, listen: false).catalog.clear();
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -73,7 +70,6 @@ class Catalog extends StatelessWidget {
                           itemCount: snapshot.data.length,
                           itemBuilder: (BuildContext context, int index) {
                             var document = snapshot.data[index];
-
                             return Slidable(
                               actionPane: SlidableDrawerActionPane(),
                               actionExtentRatio: 0.25,
@@ -88,7 +84,15 @@ class Catalog extends StatelessWidget {
                                   caption: 'Delete',
                                   color: Colors.red,
                                   icon: Icons.delete,
-                                  onTap: () {},
+                                  onTap: () async {
+                                    await FirebaseFirestore.instance.collection('catalog').doc(document['id'].toString()).delete().then((value) {
+                                      Provider.of<DatabaseService>(context, listen: false).catalog.clear();
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) => Catalog()));
+                                    });
+                                  },
                                 ),
                               ],
                               child: Padding(

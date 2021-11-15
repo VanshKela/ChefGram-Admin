@@ -36,11 +36,13 @@ class DatabaseService {
           "name": data["name"],
           "price": data["price"],
           "quantity": data["quantity"],
-          "image": data["image"]
+          "image": data["image"],
+          'id': queryDocumentSnapshot.id
         });
       }
       return catalog;
     } else
       return catalog;
   }
+
 }
