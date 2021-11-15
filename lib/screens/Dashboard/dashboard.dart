@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../authentication_service.dart';
-import 'add_to_catalog.dart';
+import 'orders.dart';
 import 'catalog.dart';
 
 class Dashboard extends StatefulWidget {
@@ -37,7 +37,10 @@ class _DashboardState extends State<Dashboard> {
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold),
         ),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Orders()));
+        },
       ),
       ElevatedButton(
         child: Text(
@@ -78,26 +81,3 @@ class _DashboardState extends State<Dashboard> {
   }
 }
 
-class NotAnAdmin extends StatelessWidget {
-  const NotAnAdmin({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-              onPressed: () {
-                Provider.of<AuthenticationService>(context, listen: false)
-                    .signOut();
-              },
-              icon: Icon(Icons.logout)),
-        ],
-        title: Text("Unauthorised Access"),
-      ),
-      body: Center(
-        child: Text("Not an employee"),
-      ),
-    );
-  }
-}
