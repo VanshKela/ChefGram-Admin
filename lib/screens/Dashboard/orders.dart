@@ -1,19 +1,14 @@
+import 'package:chef_gram_admin/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import 'order_summary.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-var state;
-var city;
-var beat;
-var employee;
-var startDate =
-    DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
-        .subtract(Duration(days: 6));
-var endDate = DateTime.now();
+late Stream<QuerySnapshot<Map<String, dynamic>>> myStream;
 
 class Orders extends StatefulWidget {
   const Orders({Key? key}) : super(key: key);
@@ -23,22 +18,11 @@ class Orders extends StatefulWidget {
 }
 
 class _OrdersState extends State<Orders> {
-  Stream<QuerySnapshot<Map<String, dynamic>>> getStream() {
-    Query<Map<String, dynamic>> query = FirebaseFirestore.instance
-        .collection('orders')
-        .where('dateTime',
-            isGreaterThan: startDate, isLessThanOrEqualTo: endDate)
-        .orderBy('dateTime', descending: true);
-
-    if (employee != null)
-      query = query.where('orderTakenBy', isEqualTo: employee);
-    if (state != null)
-      query = query.where('state', isEqualTo: state);
-    if (city != null)
-      query = query.where('city', isEqualTo: city);
-    if (beat != null)
-      query = query.where('beat', isEqualTo: beat);
-    return query.snapshots();
+  @override
+  void initState() {
+    myStream =
+        Provider.of<DatabaseService>(context, listen: false).filters.stream;
+    super.initState();
   }
 
   @override
@@ -73,7 +57,7 @@ class _OrdersState extends State<Orders> {
           ],
         ),
         body: StreamBuilder(
-          stream: getStream(),
+          stream: myStream,
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {
@@ -222,30 +206,30 @@ class _FilterPageState extends State<FilterPage> {
               showActionButtons: true,
               onSelectionChanged: _onSelectionChanged,
               selectionMode: DateRangePickerSelectionMode.range,
-              initialSelectedRange: PickerDateRange(startDate, endDate),
+              initialSelectedRange: PickerDateRange(
+                  Provider.of<DatabaseService>(context).filters.startDate,
+                  Provider.of<DatabaseService>(context).filters.endDate),
               onCancel: () {
-                setState(() {
-                  startDate = DateTime(DateTime.now().year,
-                          DateTime.now().month, DateTime.now().day)
-                      .subtract(Duration(days: 6));
-                  endDate = DateTime.now();
-                });
+                // setState(() {
+                //   startDate = DateTime(DateTime.now().year,
+                //           DateTime.now().month, DateTime.now().day)
+                //       .subtract(Duration(days: 6));
+                //   endDate = DateTime.now();
+                // });
+
                 Navigator.pop(context);
-                Navigator.pop(context);
-                Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (context) => Orders()));
               },
               onSubmit: (Object value) {
-                if (value is PickerDateRange) {
-                  setState(() {
-                    startDate = value.startDate!;
-                    endDate = value.endDate!.add(Duration(days: 1));
-                  });
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => Orders()));
-                }
+                // if (value is PickerDateRange) {
+                //   setState(() {
+                //     startDate = value.startDate!;
+                //     endDate = value.endDate!.add(Duration(days: 1));
+                //   });
+                //   Navigator.pop(context);
+                //   Navigator.pop(context);
+                //   Navigator.pushReplacement(context,
+                //       MaterialPageRoute(builder: (context) => Orders()));
+                // }
               },
             ),
           )),
@@ -258,6 +242,10 @@ class _FilterPageState extends State<FilterPage> {
       FirebaseFirestore.instance.collection('states');
 
   bool applyFilter = false;
+  var state;
+  var city;
+  var beat;
+  var employee;
 
   List<String> beats = [];
   List<String> stateList = [];
@@ -478,9 +466,12 @@ class _FilterPageState extends State<FilterPage> {
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.red)),
               onPressed: () {
-                state = null;
-                city = null;
-                beat = null;
+                Provider.of<DatabaseService>(context, listen: false)
+                    .filters
+                    .reset();
+                print(Provider.of<DatabaseService>(context, listen: false)
+                    .filters
+                    .state = state);
                 Navigator.pop(context);
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (context) => Orders()));
@@ -491,9 +482,19 @@ class _FilterPageState extends State<FilterPage> {
               style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.green)),
               onPressed: () {
+                Provider.of<DatabaseService>(context, listen: false)
+                    .filters
+                    .update(
+                        state: state,
+                        city: city,
+                        beat: beat,
+                        employee: employee);
+                setState(() {
+                  myStream = Provider.of<DatabaseService>(context, listen: false)
+                      .filters
+                      .stream;
+                });
                 Navigator.pop(context);
-                Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (context) => Orders()));
               },
             ),
           ],

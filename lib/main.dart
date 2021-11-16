@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
           initialData:
               Profile(name: '', age: 0, role: ''),
         ),
+
       ],
       child: Sizer(builder: (context, orientation, deviceTye) {
         return MaterialApp(
