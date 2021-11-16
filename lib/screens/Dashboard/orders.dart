@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import 'order_summary.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -243,6 +244,33 @@ class FilterPage extends StatefulWidget {
 }
 
 class _FilterPageState extends State<FilterPage> {
+  void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
+    print(args.value);
+  }
+
+  void _showDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Choose Date"),
+          content: SingleChildScrollView(
+              child: Container(
+            height: 50.h,
+            width: 50.w,
+            child: SfDateRangePicker(
+              showActionButtons: true,
+              onSelectionChanged: _onSelectionChanged,
+              selectionMode: DateRangePickerSelectionMode.range,
+              initialSelectedRange: PickerDateRange(
+                  DateTime.now().subtract(Duration(days: 7)), DateTime.now()),
+            ),
+          )),
+        );
+      },
+    );
+  }
+
   static CollectionReference stateCollection =
       FirebaseFirestore.instance.collection('states');
 
@@ -318,6 +346,24 @@ class _FilterPageState extends State<FilterPage> {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 4.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Select Date Range:",
+                style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
+              ),
+              IconButton(
+                icon: Icon(Icons.calendar_today),
+                onPressed: () {
+                  _showDialog();
+                },
+              )
+            ],
+          ),
+        ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 4.w),
           child: Row(
