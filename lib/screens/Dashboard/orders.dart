@@ -26,9 +26,9 @@ class _OrdersState extends State<Orders> {
   Stream<QuerySnapshot<Map<String, dynamic>>> getStream() {
     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
         .collection('orders')
-        .orderBy('dateTime', descending: true)
         .where('dateTime',
-            isGreaterThan: startDate, isLessThanOrEqualTo: endDate);
+            isGreaterThan: startDate, isLessThanOrEqualTo: endDate)
+        .orderBy('dateTime', descending: true);
 
     if (employee != null) {
       query = query.where('orderTakenBy', isEqualTo: employee);
@@ -238,6 +238,8 @@ class _FilterPageState extends State<FilterPage> {
                   endDate = DateTime.now();
                 });
                 Navigator.pop(context);
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) => Orders()));
               },
               onSubmit: (Object value) {
                 if (value is PickerDateRange) {
@@ -245,6 +247,9 @@ class _FilterPageState extends State<FilterPage> {
                     startDate = value.startDate!;
                     endDate = value.endDate!.add(Duration(days: 1));
                   });
+                  Navigator.pop(context);
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => Orders()));
                 }
               },
             ),
