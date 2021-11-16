@@ -30,22 +30,15 @@ class _OrdersState extends State<Orders> {
             isGreaterThan: startDate, isLessThanOrEqualTo: endDate)
         .orderBy('dateTime', descending: true);
 
-    if (employee != null) {
+    if (employee != null)
       query = query.where('orderTakenBy', isEqualTo: employee);
-    }
-    if (state == null) {
-      return query.snapshots();
-    } else {
-      if (city == null) {
-        return query.where('state', isEqualTo: state).snapshots();
-      } else {
-        if (beat == null) {
-          return query.where('city', isEqualTo: city).snapshots();
-        } else {
-          return query.where('beat', isEqualTo: beat).snapshots();
-        }
-      }
-    }
+    if (state != null)
+      query = query.where('state', isEqualTo: state);
+    if (city != null)
+      query = query.where('city', isEqualTo: city);
+    if (beat != null)
+      query = query.where('beat', isEqualTo: beat);
+    return query.snapshots();
   }
 
   @override
@@ -238,6 +231,7 @@ class _FilterPageState extends State<FilterPage> {
                   endDate = DateTime.now();
                 });
                 Navigator.pop(context);
+                Navigator.pop(context);
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (context) => Orders()));
               },
@@ -247,6 +241,7 @@ class _FilterPageState extends State<FilterPage> {
                     startDate = value.startDate!;
                     endDate = value.endDate!.add(Duration(days: 1));
                   });
+                  Navigator.pop(context);
                   Navigator.pop(context);
                   Navigator.pushReplacement(context,
                       MaterialPageRoute(builder: (context) => Orders()));
