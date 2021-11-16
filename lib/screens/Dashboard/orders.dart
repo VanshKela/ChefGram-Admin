@@ -34,7 +34,7 @@ class _OrdersState extends State<Orders> {
       query = query.where('orderTakenBy', isEqualTo: employee);
     }
     if (state == null) {
-      return query.limit(10).snapshots();
+      return query.snapshots();
     } else {
       if (city == null) {
         return query.where('state', isEqualTo: state).limit(10).snapshots();
@@ -250,9 +250,7 @@ class FilterPage extends StatefulWidget {
 }
 
 class _FilterPageState extends State<FilterPage> {
-  void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
-    print(args.value);
-  }
+  void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {}
 
   void _showDialog() {
     showDialog(
@@ -268,8 +266,26 @@ class _FilterPageState extends State<FilterPage> {
               showActionButtons: true,
               onSelectionChanged: _onSelectionChanged,
               selectionMode: DateRangePickerSelectionMode.range,
-              initialSelectedRange: PickerDateRange(
-                  DateTime.now().subtract(Duration(days: 7)), DateTime.now()),
+              initialSelectedRange: PickerDateRange(startDate, endDate),
+              onCancel: () {
+                setState(() {
+                  startDate = DateTime(DateTime.now().year,
+                          DateTime.now().month, DateTime.now().day)
+                      .subtract(Duration(days: 6));
+                  endDate = DateTime.now();
+                });
+                Navigator.pop(context);
+              },
+              onSubmit: (Object value) {
+                if (value is PickerDateRange) {
+                  final DateTime rangeStartDate = value.startDate!;
+                  final DateTime rangeEndDate = value.endDate!;
+                  setState(() {
+                    startDate = rangeStartDate;
+                    endDate = rangeEndDate;
+                  });
+                }
+              },
             ),
           )),
         );
