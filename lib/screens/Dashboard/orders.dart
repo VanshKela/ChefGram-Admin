@@ -10,6 +10,10 @@ var state;
 var city;
 var beat;
 var employee;
+var startDate =
+    DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
+        .subtract(Duration(days: 6));
+var endDate = DateTime.now();
 
 class Orders extends StatefulWidget {
   const Orders({Key? key}) : super(key: key);
@@ -22,7 +26,9 @@ class _OrdersState extends State<Orders> {
   Stream<QuerySnapshot<Map<String, dynamic>>> getStream() {
     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
         .collection('orders')
-        .orderBy('dateTime', descending: true);
+        .orderBy('dateTime', descending: true)
+        .where('dateTime',
+            isGreaterThan: startDate, isLessThanOrEqualTo: endDate);
 
     if (employee != null) {
       query = query.where('orderTakenBy', isEqualTo: employee);
