@@ -39,7 +39,7 @@ class _DashboardState extends State<Dashboard> {
         ),
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Orders()));
+              context, MaterialPageRoute(builder: (context) => Orders(isFromHome: true)));
         },
       ),
       ElevatedButton(

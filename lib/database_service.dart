@@ -17,7 +17,6 @@ class DatabaseService {
     return _profileCollection.doc(uid).snapshots().map(_profileFromSnapshot);
   }
 
-
   Profile _profileFromSnapshot(DocumentSnapshot snapshot) {
     return Profile(
       name: snapshot.get('name') ?? '',
@@ -86,6 +85,27 @@ class Filters extends ChangeNotifier {
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
             .subtract(Duration(days: 6));
     this.endDate = DateTime.now();
+    this.stream = FirebaseFirestore.instance
+        .collection('orders')
+        .where('dateTime',
+        isGreaterThan: DateTime(DateTime.now().year, DateTime.now().month,
+            DateTime.now().day)
+            .subtract(Duration(days: 6)),
+        isLessThanOrEqualTo: DateTime.now())
+        .orderBy('dateTime', descending: true)
+        .snapshots();
+  }
+
+  void updateDates (startDate, endDate){
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.stream = FirebaseFirestore.instance
+        .collection('orders')
+        .where('dateTime',
+        isGreaterThan: startDate,
+        isLessThanOrEqualTo: endDate)
+        .orderBy('dateTime', descending: true)
+        .snapshots();
   }
 
   void update({state, city, beat, employee}) {
@@ -98,7 +118,8 @@ class Filters extends ChangeNotifier {
     this.city = city;
     this.employee = employee;
     this.beat = beat;
-    if (employee != null) query = query.where('orderTakenBy', isEqualTo: employee);
+    if (employee != null)
+      query = query.where('orderTakenBy', isEqualTo: employee);
     if (state != null) query = query.where('state', isEqualTo: state);
     if (city != null) query = query.where('city', isEqualTo: city);
     if (beat != null) query = query.where('beat', isEqualTo: beat);

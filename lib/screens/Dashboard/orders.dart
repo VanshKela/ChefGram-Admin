@@ -8,10 +8,9 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'order_summary.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-late Stream<QuerySnapshot<Map<String, dynamic>>> myStream;
-
 class Orders extends StatefulWidget {
-  const Orders({Key? key}) : super(key: key);
+  const Orders({Key? key, required this.isFromHome}) : super(key: key);
+  final bool isFromHome;
 
   @override
   _OrdersState createState() => _OrdersState();
@@ -19,14 +18,9 @@ class Orders extends StatefulWidget {
 
 class _OrdersState extends State<Orders> {
   @override
-  void initState() {
-    myStream =
-        Provider.of<DatabaseService>(context, listen: false).filters.stream;
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    if (widget.isFromHome)
+      Provider.of<DatabaseService>(context).filters.reset();
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.indigo.shade50,
@@ -57,7 +51,7 @@ class _OrdersState extends State<Orders> {
           ],
         ),
         body: StreamBuilder(
-          stream: myStream,
+          stream: Provider.of<DatabaseService>(context).filters.stream,
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {
@@ -207,29 +201,29 @@ class _FilterPageState extends State<FilterPage> {
               onSelectionChanged: _onSelectionChanged,
               selectionMode: DateRangePickerSelectionMode.range,
               initialSelectedRange: PickerDateRange(
-                  Provider.of<DatabaseService>(context).filters.startDate,
-                  Provider.of<DatabaseService>(context).filters.endDate),
+                  Provider.of<DatabaseService>(context, listen: false).filters.startDate,
+                  Provider.of<DatabaseService>(context, listen: false).filters.endDate),
               onCancel: () {
-                // setState(() {
-                //   startDate = DateTime(DateTime.now().year,
-                //           DateTime.now().month, DateTime.now().day)
-                //       .subtract(Duration(days: 6));
-                //   endDate = DateTime.now();
-                // });
-
+                Provider.of<DatabaseService>(context, listen: false)
+                    .filters
+                    .updateDates(
+                        DateTime(DateTime.now().year, DateTime.now().month,
+                                DateTime.now().day)
+                            .subtract(Duration(days: 6)),
+                        DateTime.now());
                 Navigator.pop(context);
               },
               onSubmit: (Object value) {
-                // if (value is PickerDateRange) {
-                //   setState(() {
-                //     startDate = value.startDate!;
-                //     endDate = value.endDate!.add(Duration(days: 1));
-                //   });
-                //   Navigator.pop(context);
-                //   Navigator.pop(context);
-                //   Navigator.pushReplacement(context,
-                //       MaterialPageRoute(builder: (context) => Orders()));
-                // }
+                if (value is PickerDateRange) {
+                  Provider.of<DatabaseService>(context, listen: false).filters.updateDates(
+                      value.startDate!, value.endDate!.add(Duration(days: 1)));
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Orders(isFromHome: false)));
+                }
               },
             ),
           )),
@@ -469,12 +463,11 @@ class _FilterPageState extends State<FilterPage> {
                 Provider.of<DatabaseService>(context, listen: false)
                     .filters
                     .reset();
-                print(Provider.of<DatabaseService>(context, listen: false)
-                    .filters
-                    .state = state);
                 Navigator.pop(context);
                 Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (context) => Orders()));
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Orders(isFromHome: false)));
               },
             ),
             ElevatedButton(
@@ -489,12 +482,11 @@ class _FilterPageState extends State<FilterPage> {
                         city: city,
                         beat: beat,
                         employee: employee);
-                setState(() {
-                  myStream = Provider.of<DatabaseService>(context, listen: false)
-                      .filters
-                      .stream;
-                });
                 Navigator.pop(context);
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Orders(isFromHome: false)));
               },
             ),
           ],
