@@ -37,21 +37,12 @@ class _OrdersState extends State<Orders> {
       return query.snapshots();
     } else {
       if (city == null) {
-        return query.where('state', isEqualTo: state).limit(10).snapshots();
+        return query.where('state', isEqualTo: state).snapshots();
       } else {
         if (beat == null) {
-          return query
-              .where('state', isEqualTo: state)
-              .where('city', isEqualTo: city)
-              .limit(10)
-              .snapshots();
+          return query.where('city', isEqualTo: city).snapshots();
         } else {
-          return query
-              .where('state', isEqualTo: state)
-              .where('city', isEqualTo: city)
-              .where('beat', isEqualTo: beat)
-              .limit(10)
-              .snapshots();
+          return query.where('beat', isEqualTo: beat).snapshots();
         }
       }
     }
@@ -204,34 +195,6 @@ class SingleOrderWidget extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // child: Row(
-                  //   children: [
-                  //     Expanded(
-                  //       child: Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           Text(
-                  //             order['shopName'],
-                  //             style: TextStyle(fontSize: 18.sp),
-                  //           ),
-                  //           Text(
-                  //             "For: ${order['customerName']}",
-                  //             style: TextStyle(fontSize: 12.sp),
-                  //           ),
-                  //           Text(
-                  //             "By: ${order['orderTakenBy']}",
-                  //             style: TextStyle(fontSize: 12.sp),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //     Text(
-                  //       "₹ ${}",
-                  //       style: TextStyle(
-                  //           fontSize: 16.sp, fontWeight: FontWeight.bold),
-                  //     ),
-                  //   ],
-                  // ),
                 ),
               )
             ],
@@ -278,11 +241,9 @@ class _FilterPageState extends State<FilterPage> {
               },
               onSubmit: (Object value) {
                 if (value is PickerDateRange) {
-                  final DateTime rangeStartDate = value.startDate!;
-                  final DateTime rangeEndDate = value.endDate!;
                   setState(() {
-                    startDate = rangeStartDate;
-                    endDate = rangeEndDate;
+                    startDate = value.startDate!;
+                    endDate = value.endDate!.add(Duration(days: 1));
                   });
                 }
               },
