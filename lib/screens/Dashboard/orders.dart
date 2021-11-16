@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 import 'order_summary.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 var state;
 var city;
@@ -56,18 +57,29 @@ class _OrdersState extends State<Orders> {
         backgroundColor: Colors.indigo.shade50,
         appBar: AppBar(
           title: Text("Order History"),
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return FilterPage();
-                });
-          },
-          label: Row(
-            children: [Icon(Icons.filter_list_outlined), Text("Filter")],
-          ),
+          actions: [
+            GestureDetector(
+              onTap: () {
+                showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return FilterPage();
+                    });
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                child: Row(
+                  children: [
+                    Icon(Icons.filter_list_outlined),
+                    Text(
+                      "Filter",
+                      style: TextStyle(fontSize: 12.sp),
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
         ),
         body: StreamBuilder(
           stream: getStream(),
@@ -141,23 +153,46 @@ class SingleOrderWidget extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 1.h),
                   child: ListTile(
-                    leading: CircleAvatar(
-                      child: Icon(Icons.check),
-                    ),
                     title: Text(
                       order['shopName'],
                       style: TextStyle(fontSize: 18.sp),
                     ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    subtitle: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "For: ${order['customerName']}",
-                          style: TextStyle(fontSize: 12.sp),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "For: ${order['customerName']}",
+                              style: TextStyle(fontSize: 12.sp),
+                            ),
+                            Text(
+                              "By: ${order['orderTakenBy']}",
+                              style: TextStyle(fontSize: 12.sp),
+                            ),
+                          ],
                         ),
-                        Text(
-                          "By: ${order['orderTakenBy']}",
-                          style: TextStyle(fontSize: 12.sp),
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Color(0xff00873C),
+                              child: Icon(
+                                FontAwesomeIcons.rupeeSign,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 2.w),
+                              child: Text(
+                                order['total'].toString(),
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14.sp),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -184,7 +219,7 @@ class SingleOrderWidget extends StatelessWidget {
                   //       ),
                   //     ),
                   //     Text(
-                  //       "₹ ${order['total']}",
+                  //       "₹ ${}",
                   //       style: TextStyle(
                   //           fontSize: 16.sp, fontWeight: FontWeight.bold),
                   //     ),
