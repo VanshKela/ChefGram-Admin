@@ -18,8 +18,9 @@ class Orders extends StatefulWidget {
 
 class _OrdersState extends State<Orders> {
   Stream<QuerySnapshot<Map<String, dynamic>>> getStream() {
-    Query<Map<String, dynamic>> query =
-        FirebaseFirestore.instance.collection('orders');
+    Query<Map<String, dynamic>> query = FirebaseFirestore.instance
+        .collection('orders')
+        .orderBy('dateTime', descending: true);
 
     if (employee != null) {
       query = query.where('orderTakenBy', isEqualTo: employee);
@@ -52,6 +53,7 @@ class _OrdersState extends State<Orders> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.indigo.shade50,
         appBar: AppBar(
           title: Text("Order History"),
         ),
@@ -118,47 +120,77 @@ class SingleOrderWidget extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
         child: Container(
-          width: 100.w,
           decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.grey,
-              width: 2,
-            ),
-            borderRadius: BorderRadius.all(
-              Radius.circular(5.0),
-            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.15),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: Offset(0, 3), // changes position of shadow
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 1.h),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      child: Icon(Icons.check),
+                    ),
+                    title: Text(
+                      order['shopName'],
+                      style: TextStyle(fontSize: 18.sp),
+                    ),
+                    subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Customer Name : ${order['customerName']}",
-                          style: TextStyle(
-                              fontSize: 12.sp, fontWeight: FontWeight.bold),
+                          "For: ${order['customerName']}",
+                          style: TextStyle(fontSize: 12.sp),
                         ),
                         Text(
                           "By: ${order['orderTakenBy']}",
                           style: TextStyle(fontSize: 12.sp),
                         ),
-                        Text(
-                          "Shop : ${order['shopName']}",
-                          style: TextStyle(fontSize: 12.sp),
-                        ),
                       ],
                     ),
                   ),
-                  Text(
-                    "₹ ${order['total']}",
-                    style:
-                        TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-                  ),
-                ],
+                  // child: Row(
+                  //   children: [
+                  //     Expanded(
+                  //       child: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           Text(
+                  //             order['shopName'],
+                  //             style: TextStyle(fontSize: 18.sp),
+                  //           ),
+                  //           Text(
+                  //             "For: ${order['customerName']}",
+                  //             style: TextStyle(fontSize: 12.sp),
+                  //           ),
+                  //           Text(
+                  //             "By: ${order['orderTakenBy']}",
+                  //             style: TextStyle(fontSize: 12.sp),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //     Text(
+                  //       "₹ ${order['total']}",
+                  //       style: TextStyle(
+                  //           fontSize: 16.sp, fontWeight: FontWeight.bold),
+                  //     ),
+                  //   ],
+                  // ),
+                ),
               )
             ],
           ),
