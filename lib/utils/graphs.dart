@@ -1,7 +1,11 @@
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:sizer/sizer.dart';
+
+import '../database_service.dart';
 
 class _ChartData {
   _ChartData(this.x, this.y);
@@ -10,17 +14,26 @@ class _ChartData {
   final int y;
 }
 
-Widget DayBasedLineGraph(List orderData) {
-  final List<_ChartData> chartData = [
-    _ChartData("YO", 35),
-    _ChartData("YO1", 28),
-    _ChartData("YO2", 34),
-    _ChartData("YO3", 32),
-    _ChartData("YO4", 40)
-  ];
+Widget DayBasedLineGraph(List orderData, BuildContext context) {
+  List<_ChartData> chartData = [];
+  DateTime startDate = Provider.of<DatabaseService>(context, listen: false).filters.startDate;
+  int dayDiff = Provider.of<DatabaseService>(context, listen: false).filters.endDate.difference(startDate).inDays;
+  Map<String, int> orderMap = {};
+  for(int i=0; i<dayDiff; i++) {
+    DateTime newDay = startDate.add(Duration(days: i));
+    String key = "${newDay.day}-${newDay.month}";
+    orderMap['$key'] = 0;
+  }
+  orderData.forEach((order) {
+    DateTime dateTime = order['dateTime'].toDate();
+    String key = "${dateTime.day}-${dateTime.month}";
+    orderMap['$key'] = (orderMap['$key']! + order['total']) as int;
+  });
+  orderMap.forEach((key, value) {
+    chartData.add(_ChartData(key, value));
+  });
   return Container(
     child: SfCartesianChart(primaryXAxis: CategoryAxis(), series: <ChartSeries>[
-      // Renders line chart
       LineSeries<_ChartData, String>(
           dataSource: chartData,
           xValueMapper: (_ChartData sales, _) => sales.x,

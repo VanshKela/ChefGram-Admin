@@ -20,7 +20,7 @@ class _StatsPageState extends State<StatsPage> {
     List<Widget> graphs = [];
     Filters filter =
         Provider.of<DatabaseService>(context, listen: false).filters;
-    graphs.add(DayBasedLineGraph(widget.orderData));
+    graphs.add(DayBasedLineGraph(widget.orderData, context));
     if (filter.employee == null) graphs.add(EmployeeBarGraph(widget.orderData));
     if (filter.state == null) graphs.add(StatePieChart(widget.orderData));
     return graphs;
