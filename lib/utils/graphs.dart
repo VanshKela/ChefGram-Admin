@@ -16,10 +16,15 @@ class _ChartData {
 
 Widget DayBasedLineGraph(List orderData, BuildContext context) {
   List<_ChartData> chartData = [];
-  DateTime startDate = Provider.of<DatabaseService>(context, listen: false).filters.startDate;
-  int dayDiff = Provider.of<DatabaseService>(context, listen: false).filters.endDate.difference(startDate).inDays;
+  DateTime startDate =
+      Provider.of<DatabaseService>(context, listen: false).filters.startDate;
+  int dayDiff = Provider.of<DatabaseService>(context, listen: false)
+      .filters
+      .endDate
+      .difference(startDate)
+      .inDays;
   Map<String, int> orderMap = {};
-  for(int i=0; i<dayDiff; i++) {
+  for (int i = 0; i < dayDiff; i++) {
     DateTime newDay = startDate.add(Duration(days: i));
     String key = "${newDay.day}-${newDay.month}";
     orderMap['$key'] = 0;
@@ -32,13 +37,18 @@ Widget DayBasedLineGraph(List orderData, BuildContext context) {
   orderMap.forEach((key, value) {
     chartData.add(_ChartData(key, value));
   });
+  TooltipBehavior _tooltip = TooltipBehavior(enable: true);
   return Container(
-    child: SfCartesianChart(primaryXAxis: CategoryAxis(), series: <ChartSeries>[
-      LineSeries<_ChartData, String>(
-          dataSource: chartData,
-          xValueMapper: (_ChartData sales, _) => sales.x,
-          yValueMapper: (_ChartData sales, _) => sales.y)
-    ]),
+    child: SfCartesianChart(
+        primaryXAxis: CategoryAxis(),
+        tooltipBehavior: _tooltip,
+        series: <ChartSeries>[
+          LineSeries<_ChartData, String>(
+            dataSource: chartData,
+            xValueMapper: (_ChartData sales, _) => sales.x,
+            yValueMapper: (_ChartData sales, _) => sales.y,
+          ),
+        ]),
   );
 }
 
