@@ -276,7 +276,8 @@ class _FilterPageState extends State<FilterPage> {
   Future<void> getCities() async {
     List<String> _cityList = [];
     var cityCollection = await FirebaseFirestore.instance
-        .collection('states/${state.replaceAll(' ', '')}/cities')
+        .collection(
+            'states/${(state ?? Provider.of<DatabaseService>(context, listen: false).filters.state).replaceAll(' ', '')}/cities')
         .get();
     for (var city in cityCollection.docs) {
       _cityList.add(city['cityName']);
@@ -288,7 +289,8 @@ class _FilterPageState extends State<FilterPage> {
 
   Future<void> getBeat() async {
     var beatCollection = await FirebaseFirestore.instance
-        .collection('states/${state.replaceAll(' ', '')}/cities')
+        .collection(
+            'states/${(state ?? Provider.of<DatabaseService>(context, listen: false).filters.state).replaceAll(' ', '')}/cities')
         .where('cityName', isEqualTo: city)
         .get();
     List<String> _beats = [];
@@ -352,7 +354,10 @@ class _FilterPageState extends State<FilterPage> {
                 style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
               ),
               DropdownButton<String>(
-                value: employee,
+                value: employee ??
+                    Provider.of<DatabaseService>(context, listen: false)
+                        .filters
+                        .employee,
                 icon: Icon(Icons.keyboard_arrow_down),
                 iconSize: 28,
                 elevation: 20,
@@ -381,7 +386,10 @@ class _FilterPageState extends State<FilterPage> {
                 style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
               ),
               DropdownButton<String>(
-                value: state,
+                value: state ??
+                    Provider.of<DatabaseService>(context, listen: false)
+                        .filters
+                        .state,
                 icon: Icon(Icons.keyboard_arrow_down),
                 iconSize: 28,
                 elevation: 20,
@@ -415,7 +423,10 @@ class _FilterPageState extends State<FilterPage> {
                 style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
               ),
               DropdownButton<String>(
-                value: city,
+                value: city ??
+                    Provider.of<DatabaseService>(context, listen: false)
+                        .filters
+                        .city,
                 icon: Icon(Icons.keyboard_arrow_down),
                 iconSize: 28,
                 elevation: 20,
@@ -446,7 +457,10 @@ class _FilterPageState extends State<FilterPage> {
                 style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
               ),
               DropdownButton<String>(
-                value: beat,
+                value: beat ??
+                    Provider.of<DatabaseService>(context, listen: false)
+                        .filters
+                        .beat,
                 icon: Icon(Icons.keyboard_arrow_down),
                 iconSize: 28,
                 elevation: 20,
