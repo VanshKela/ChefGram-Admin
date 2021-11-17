@@ -10,6 +10,25 @@ class _ChartData {
   final int y;
 }
 
+Widget DayBasedLineGraph(List orderData) {
+  final List<_ChartData> chartData = [
+    _ChartData("YO", 35),
+    _ChartData("YO1", 28),
+    _ChartData("YO2", 34),
+    _ChartData("YO3", 32),
+    _ChartData("YO4", 40)
+  ];
+  return Container(
+    child: SfCartesianChart(primaryXAxis: CategoryAxis(), series: <ChartSeries>[
+      // Renders line chart
+      LineSeries<_ChartData, String>(
+          dataSource: chartData,
+          xValueMapper: (_ChartData sales, _) => sales.x,
+          yValueMapper: (_ChartData sales, _) => sales.y)
+    ]),
+  );
+}
+
 Widget StatePieChart(List orderData) {
   var totalSale = 0.0;
   List<_ChartData> chartData = [];
@@ -59,7 +78,7 @@ Widget EmployeeBarGraph(List orderData) {
     child: SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-          width: data.length < 10 ? 100.w : 30.0 * data.length,
+          width: data.length < 8 ? 100.w : 100.0 * data.length,
           child: SfCartesianChart(
               primaryXAxis: CategoryAxis(),
               primaryYAxis: NumericAxis(
@@ -70,7 +89,8 @@ Widget EmployeeBarGraph(List orderData) {
               series: <ChartSeries<_ChartData, String>>[
                 ColumnSeries<_ChartData, String>(
                     dataSource: data,
-                    xValueMapper: (_ChartData data, _) => data.x,
+                    xValueMapper: (_ChartData data, _) =>
+                        data.x.length < 10 ? data.x : data.x.substring(0, 10),
                     yValueMapper: (_ChartData data, _) => data.y,
                     name: 'Gold',
                     color: Color.fromRGBO(8, 142, 255, 1))
