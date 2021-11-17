@@ -201,8 +201,12 @@ class _FilterPageState extends State<FilterPage> {
               onSelectionChanged: _onSelectionChanged,
               selectionMode: DateRangePickerSelectionMode.range,
               initialSelectedRange: PickerDateRange(
-                  Provider.of<DatabaseService>(context, listen: false).filters.startDate,
-                  Provider.of<DatabaseService>(context, listen: false).filters.endDate),
+                  Provider.of<DatabaseService>(context, listen: false)
+                      .filters
+                      .startDate,
+                  Provider.of<DatabaseService>(context, listen: false)
+                      .filters
+                      .endDate),
               onCancel: () {
                 Provider.of<DatabaseService>(context, listen: false)
                     .filters
@@ -215,14 +219,12 @@ class _FilterPageState extends State<FilterPage> {
               },
               onSubmit: (Object value) {
                 if (value is PickerDateRange) {
-                  Provider.of<DatabaseService>(context, listen: false).filters.updateDates(
-                      value.startDate!, value.endDate!.add(Duration(days: 1)));
+                  Provider.of<DatabaseService>(context, listen: false)
+                      .filters
+                      .updateDates(value.startDate!,
+                          value.endDate!.add(Duration(days: 1)));
                   Navigator.pop(context);
-                  Navigator.pop(context);
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Orders(isFromHome: false)));
+                  setState(() {});
                 }
               },
             ),
@@ -307,6 +309,8 @@ class _FilterPageState extends State<FilterPage> {
 
   @override
   Widget build(BuildContext context) {
+    var startDate = Provider.of<DatabaseService>(context).filters.startDate;
+    var endDate = Provider.of<DatabaseService>(context).filters.endDate;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -320,11 +324,20 @@ class _FilterPageState extends State<FilterPage> {
                 "Select Date Range:",
                 style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
               ),
-              IconButton(
-                icon: Icon(Icons.calendar_today),
-                onPressed: () {
-                  _showDialog();
-                },
+              Row(
+                children: [
+                  Container(
+                    width: 40.w,
+                    child: Text(
+                        "${startDate.day.toString()}-${startDate.month.toString()}-${startDate.year.toString()} to ${endDate.day.toString()}-${endDate.month.toString()}-${endDate.year.toString()}"),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.calendar_today),
+                    onPressed: () {
+                      _showDialog();
+                    },
+                  ),
+                ],
               )
             ],
           ),
