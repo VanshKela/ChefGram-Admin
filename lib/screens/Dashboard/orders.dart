@@ -1,4 +1,5 @@
 import 'package:chef_gram_admin/database_service.dart';
+import 'package:chef_gram_admin/screens/Dashboard/stats_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,8 @@ class Orders extends StatefulWidget {
 }
 
 class _OrdersState extends State<Orders> {
+  List orderData = [];
+  bool isDataFetched = false;
   @override
   Widget build(BuildContext context) {
     if (widget.isFromHome)
@@ -24,6 +27,23 @@ class _OrdersState extends State<Orders> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.indigo.shade50,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            if (isDataFetched) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => StatsPage(orderData: orderData)));
+            }
+          },
+          label: Row(
+            children: [
+              Icon(Icons.stacked_bar_chart),
+              Text("Stats"),
+            ],
+          ),
+        ),
         appBar: AppBar(
           title: Text("Order History"),
           actions: [
@@ -56,6 +76,11 @@ class _OrdersState extends State<Orders> {
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) {
               return CircularProgressIndicator();
+            }
+
+            if (snapshot.connectionState == ConnectionState.active) {
+              isDataFetched = true;
+              orderData = snapshot.data!.docs;
             }
             return Container(
               child: (snapshot.data!.docs.length == 0)
@@ -276,8 +301,7 @@ class _FilterPageState extends State<FilterPage> {
   Future<void> getCities() async {
     List<String> _cityList = [];
     var cityCollection = await FirebaseFirestore.instance
-        .collection(
-            'states/${(state ?? Provider.of<DatabaseService>(context, listen: false).filters.state).replaceAll(' ', '')}/cities')
+        .collection('states/${state.replaceAll(' ', '')}/cities')
         .get();
     for (var city in cityCollection.docs) {
       _cityList.add(city['cityName']);
@@ -289,8 +313,7 @@ class _FilterPageState extends State<FilterPage> {
 
   Future<void> getBeat() async {
     var beatCollection = await FirebaseFirestore.instance
-        .collection(
-            'states/${(state ?? Provider.of<DatabaseService>(context, listen: false).filters.state).replaceAll(' ', '')}/cities')
+        .collection('states/${state.replaceAll(' ', '')}/cities')
         .where('cityName', isEqualTo: city)
         .get();
     List<String> _beats = [];
@@ -354,10 +377,7 @@ class _FilterPageState extends State<FilterPage> {
                 style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
               ),
               DropdownButton<String>(
-                value: employee ??
-                    Provider.of<DatabaseService>(context, listen: false)
-                        .filters
-                        .employee,
+                value: employee,
                 icon: Icon(Icons.keyboard_arrow_down),
                 iconSize: 28,
                 elevation: 20,
@@ -386,10 +406,7 @@ class _FilterPageState extends State<FilterPage> {
                 style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
               ),
               DropdownButton<String>(
-                value: state ??
-                    Provider.of<DatabaseService>(context, listen: false)
-                        .filters
-                        .state,
+                value: state,
                 icon: Icon(Icons.keyboard_arrow_down),
                 iconSize: 28,
                 elevation: 20,
@@ -423,10 +440,7 @@ class _FilterPageState extends State<FilterPage> {
                 style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
               ),
               DropdownButton<String>(
-                value: city ??
-                    Provider.of<DatabaseService>(context, listen: false)
-                        .filters
-                        .city,
+                value: city,
                 icon: Icon(Icons.keyboard_arrow_down),
                 iconSize: 28,
                 elevation: 20,
@@ -457,10 +471,7 @@ class _FilterPageState extends State<FilterPage> {
                 style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
               ),
               DropdownButton<String>(
-                value: beat ??
-                    Provider.of<DatabaseService>(context, listen: false)
-                        .filters
-                        .beat,
+                value: beat,
                 icon: Icon(Icons.keyboard_arrow_down),
                 iconSize: 28,
                 elevation: 20,
