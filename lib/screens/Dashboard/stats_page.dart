@@ -21,17 +21,27 @@ class _StatsPageState extends State<StatsPage> {
     Filters filter =
         Provider.of<DatabaseService>(context, listen: false).filters;
     graphs.add(DayBasedLineGraph(widget.orderData, context));
-    if (filter.employee == null) graphs.add(EmployeeBarGraph(widget.orderData));
-    if (filter.state == null) graphs.add(StatePieChart(widget.orderData));
+    if (filter.employee == null)
+      graphs.add(EmployeeBarGraph(widget.orderData, context));
+    if (filter.state == null)
+      graphs.add(StatePieChart(widget.orderData));
+    else if (filter.city == null)
+      graphs.add(CityPieChart(widget.orderData));
+    else if (filter.beat == null) graphs.add(BeatBarGraph(widget.orderData));
     return graphs;
   }
 
   @override
   Widget build(BuildContext context) {
+    DateTime startDate =
+        Provider.of<DatabaseService>(context, listen: false).filters.startDate;
+    DateTime endDate =
+        Provider.of<DatabaseService>(context, listen: false).filters.endDate;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Analysis"),
+        title: Text(
+            "Analysis ${"${startDate.day}-${startDate.month}-${startDate.year}"} to ${"${endDate.day}-${endDate.month}-${endDate.year}"}"),
       ),
       body: SingleChildScrollView(
         child: Column(
