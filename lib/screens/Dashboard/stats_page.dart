@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:chef_gram_admin/database_service.dart';
+import 'package:chef_gram_admin/utils/graphs.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class StatsPage extends StatefulWidget {
   const StatsPage({Key? key, required this.orderData}) : super(key: key);
@@ -13,36 +17,13 @@ class StatsPage extends StatefulWidget {
 
 class _StatsPageState extends State<StatsPage> {
   List<Widget> getConditions() {
+    List<Widget> graphs = [];
     Filters filter =
-        Provider.of<DatabaseService>(context, listen: false).filters;
-    if (filter.state == null &&
-        filter.city == null &&
-        filter.beat == null &&
-        filter.employee == null) {
-      return [Text('PieChart'), Text("BarGraph"), Text("DateTimeAxis")];
-    } else if (filter.city == null &&
-        filter.beat == null &&
-        filter.employee == null) {
-      return [Text("BarGraph"), Text("DateTimeAxis")];
-    } else if (filter.city == null &&
-        filter.beat == null &&
-        filter.employee == null) {
-      return [Text("BarGraph"), Text("DateTimeAxis")];
-    } else if (filter.beat == null && filter.employee == null) {
-      return [Text("PieChart"), Text("BarGraph")];
-    } else if (filter.employee == null) {
-      return [Text("BarGraph")];
-    } else if (filter.state == null &&
-        filter.city == null &&
-        filter.beat == null) {
-      return [Text("DateTimeAxis")];
-    } else if (filter.city == null && filter.beat == null) {
-      return [Text("PieChart"), Text("DateTimeAxis")];
-    } else if (filter.beat == null) {
-      return [Text("TBD")];
-    }
-
-    return [Text("Noice")];
+        Provider
+            .of<DatabaseService>(context, listen: false)
+            .filters;
+    if (filter.employee == null) graphs.add(EmployeeBarGraph(widget.orderData));
+    return graphs;
   }
 
   @override
