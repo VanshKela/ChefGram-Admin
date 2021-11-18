@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:chef_gram_admin/models/profile_model.dart';
 import 'package:chef_gram_admin/screens/auth/register_employee.dart';
 import 'package:chef_gram_admin/utils/graphs.dart';
@@ -21,9 +23,11 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   List orderData = [];
   bool isDataFetched = false;
-  Map<String, dynamic> employeeSalesMap = {};
+
+  List<Widget> targetDailyWidgetList = [];
 
   void calculateSales() async {
+    List<Widget> _targetDailyWidgetList = [];
     Map<String, dynamic> _employeeSalesMap = {};
     Map<String, dynamic> employeeData =
         await Provider.of<DatabaseService>(context, listen: false)
@@ -31,13 +35,49 @@ class _DashboardState extends State<Dashboard> {
     for (String key in employeeData.keys) {
       _employeeSalesMap[key] = 0;
     }
-    orderData.forEach((order) {
+
+    for (var order in orderData) {
       if (_employeeSalesMap.containsKey(order['orderTakenBy'])) {
         _employeeSalesMap[order['orderTakenBy']] += order['total'];
       }
-    });
+    }
+
+    for (int i = 0; i < min(3, _employeeSalesMap.keys.length); i++) {
+      _targetDailyWidgetList.add(Padding(
+        padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 2.w),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              width: 35.w,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${_employeeSalesMap.keys.toList()[i]}',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
+                  ),
+                  Text(
+                      'Daily Target: ₹${(Provider.of<DatabaseService>(context, listen: false).employeeData[_employeeSalesMap.keys.toList()[i]] ~/ 30)}',
+                      style: TextStyle(fontSize: 12.sp)),
+                ],
+              ),
+            ),
+            Container(
+              width: 50.w,
+              height: 20.h,
+              child: EmployeeRadialGraph(
+                  _employeeSalesMap[_employeeSalesMap.keys.toList()[i]],
+                  Provider.of<DatabaseService>(context, listen: false)
+                      .employeeData[_employeeSalesMap.keys.toList()[i]]),
+            )
+          ],
+        ),
+      ));
+    }
     setState(() {
-      employeeSalesMap = _employeeSalesMap;
+      targetDailyWidgetList = _targetDailyWidgetList;
     });
   }
 
@@ -72,7 +112,7 @@ class _DashboardState extends State<Dashboard> {
                   ),
                   Container(
                     child: Text(
-                        Provider.of<Profile>(context, listen: false).name,
+                        Provider.of<Profile>(context, listen: true).name,
                         style: TextStyle(color: Colors.white, fontSize: 17.sp)),
                   )
                 ],
@@ -143,40 +183,47 @@ class _DashboardState extends State<Dashboard> {
               orderData = snapshot.data!.docs;
               calculateSales();
             }
-            return Container(
-              child: !isDataFetched
-                  ? CircularProgressIndicator()
-                  : Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(2.h),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      width: 2, color: Colors.indigoAccent),
-                                  borderRadius: BorderRadius.circular(5.0)),
-                              child: DailyLineGraph(orderData, context)),
-                        ),
-                        (employeeSalesMap.keys.length > 0) ? Padding(
-                          padding: EdgeInsets.all(2.h),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      width: 2, color: Colors.indigoAccent),
-                                  borderRadius: BorderRadius.circular(5.0)),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                          '${employeeSalesMap.keys.first}:${Provider.of<DatabaseService>(context).employeeData[employeeSalesMap.keys.first]}')
-                                    ],
-                                  )
-                                ],
-                              )),
-                        ) : CircularProgressIndicator(),
-                      ],
-                    ),
+            return SingleChildScrollView(
+              child: Container(
+                child: !isDataFetched
+                    ? CircularProgressIndicator()
+                    : Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(2.h),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 2, color: Colors.indigoAccent),
+                                    borderRadius: BorderRadius.circular(5.0)),
+                                child: DailyLineGraph(orderData, context)),
+                          ),
+                          (targetDailyWidgetList.length > 0)
+                              ? Padding(
+                                  padding: EdgeInsets.all(2.h),
+                                  child: Container(
+                                    height: 23.h * targetDailyWidgetList.length,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            width: 2,
+                                            color: Colors.indigoAccent),
+                                        borderRadius:
+                                            BorderRadius.circular(5.0)),
+                                    child: ListView.builder(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: targetDailyWidgetList.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return Container(
+                                              child:
+                                                  targetDailyWidgetList[index]);
+                                        }),
+                                  ),
+                                )
+                              : CircularProgressIndicator(),
+                        ],
+                      ),
+              ),
             );
           },
         ),

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:chef_gram_admin/models/profile_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -305,4 +306,39 @@ Widget DailyLineGraph(List orderData, BuildContext context) {
       ),
     ),
   );
+}
+
+Widget EmployeeRadialGraph(int sales, int target) {
+  target = target ~/ 30;
+  final List<_RadialChartData> chartData = <_RadialChartData>[
+    _RadialChartData('Daily Sale', (sales / target) * 100,
+        "${((sales / target) * 100).toStringAsFixed(2)} %"),
+  ];
+  TooltipBehavior _tooltip = TooltipBehavior(enable: true);
+  return SfCircularChart(
+      tooltipBehavior: _tooltip,
+      series: <CircularSeries<_RadialChartData, String>>[
+        RadialBarSeries<_RadialChartData, String>(
+          maximumValue: 100,
+          radius: '100%',
+          gap: '3%',
+          dataSource: chartData,
+          cornerStyle: CornerStyle.bothCurve,
+          xValueMapper: (_RadialChartData data, _) => data.xData,
+          yValueMapper: (_RadialChartData data, _) => data.yData,
+          dataLabelSettings: DataLabelSettings(
+              isVisible: true,
+              textStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+          dataLabelMapper: (_RadialChartData data, _) => data.text,
+        ),
+      ]);
+}
+
+class _RadialChartData {
+  _RadialChartData(this.xData, this.yData, this.text);
+
+  final String xData;
+  final num yData;
+
+  final String text;
 }
