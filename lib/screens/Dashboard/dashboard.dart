@@ -1,4 +1,5 @@
 import 'package:chef_gram_admin/models/profile_model.dart';
+import 'package:chef_gram_admin/screens/auth/register_employee.dart';
 import 'package:chef_gram_admin/utils/graphs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
@@ -76,7 +77,11 @@ class _DashboardState extends State<Dashboard> {
               leading: Icon(Icons.people),
               title: Text('Employee List',
                   style: TextStyle(fontWeight: FontWeight.bold)),
-              onTap: () {},
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AddEmployee()));
+              },
             ),
           ],
         ),
