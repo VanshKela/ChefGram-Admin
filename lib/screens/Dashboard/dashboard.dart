@@ -1,3 +1,6 @@
+import 'package:chef_gram_admin/models/profile_model.dart';
+import 'package:chef_gram_admin/utils/graphs.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -15,8 +18,12 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  List orderData = [];
+  bool isDataFetched = false;
   @override
   Widget build(BuildContext context) {
+    DateTime startDate =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     return Scaffold(
       drawer: Drawer(
         child: ListView(
@@ -35,8 +42,11 @@ class _DashboardState extends State<Dashboard> {
                     'Welcome,',
                     style: TextStyle(color: Colors.white, fontSize: 12.sp),
                   ),
-                  Text("Admin",
-                      style: TextStyle(color: Colors.white, fontSize: 17.sp))
+                  Container(
+                    child: Text(
+                        Provider.of<Profile>(context, listen: false).name,
+                        style: TextStyle(color: Colors.white, fontSize: 17.sp)),
+                  )
                 ],
               ),
             ),
@@ -84,7 +94,34 @@ class _DashboardState extends State<Dashboard> {
         ],
       ),
       body: Center(
-        child: Container(height: 40.h, child: Text("NoiceNoice Graphs")),
+        child: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('orders')
+              .where('dateTime', isGreaterThanOrEqualTo: startDate)
+              .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (snapshot.connectionState == ConnectionState.active) {
+              isDataFetched = true;
+              orderData = snapshot.data!.docs;
+            }
+
+            return Container(
+              child: !isDataFetched
+                  ? CircularProgressIndicator()
+                  : Column(
+                      children: [
+                        Container(child: DailyLineGraph(orderData, context))
+                      ],
+                    ),
+            );
+          },
+        ),
       ),
     );
   }

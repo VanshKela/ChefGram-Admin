@@ -259,3 +259,54 @@ Widget BeatBarGraph(List orderData) {
     ),
   );
 }
+
+Widget DailyLineGraph(List orderData, BuildContext context) {
+  List<_ChartData> chartData = [];
+  DateTime startDate =
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  int hourDiff = DateTime.now().difference(startDate).inHours;
+  Map<String, int> orderMap = {};
+  for (int i = 0; i <= hourDiff; i++) {
+    DateTime newDay = startDate.add(Duration(hours: i));
+
+    String key = "${newDay.hour}:00";
+    orderMap['$key'] = 0;
+  }
+
+  orderData.forEach((order) {
+    DateTime dateTime = order['dateTime'].toDate();
+    String key = "${dateTime.hour}:00";
+
+    orderMap['$key'] = (orderMap['$key']! + order['total']) as int;
+  });
+  orderMap.forEach((key, value) {
+    chartData.add(_ChartData(key, value));
+  });
+  TooltipBehavior _tooltip = TooltipBehavior(enable: true);
+  return Padding(
+    padding: EdgeInsets.symmetric(vertical: 1.h),
+    child: Container(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 1.h,
+          ),
+          Text(
+            "Daily Sales",
+            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
+          ),
+          SfCartesianChart(
+              primaryXAxis: CategoryAxis(),
+              tooltipBehavior: _tooltip,
+              series: <ChartSeries>[
+                LineSeries<_ChartData, String>(
+                  dataSource: chartData,
+                  xValueMapper: (_ChartData sales, _) => sales.x,
+                  yValueMapper: (_ChartData sales, _) => sales.y,
+                ),
+              ]),
+        ],
+      ),
+    ),
+  );
+}
