@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -18,8 +17,6 @@ Widget DayBasedLineGraph(List orderData, BuildContext context) {
   List<_ChartData> chartData = [];
   DateTime startDate =
       Provider.of<DatabaseService>(context, listen: false).filters.startDate;
-  DateTime endDate =
-      Provider.of<DatabaseService>(context, listen: false).filters.endDate;
   int dayDiff = Provider.of<DatabaseService>(context, listen: false)
       .filters
       .endDate
@@ -124,10 +121,6 @@ Widget EmployeeBarGraph(List orderData, BuildContext context) {
   orderMap.forEach((key, value) {
     data.add(_ChartData(key, value));
   });
-  DateTime startDate =
-      Provider.of<DatabaseService>(context, listen: false).filters.startDate;
-  DateTime endDate =
-      Provider.of<DatabaseService>(context, listen: false).filters.endDate;
   TooltipBehavior _tooltip = TooltipBehavior(enable: true);
   return Padding(
     padding: EdgeInsets.symmetric(vertical: 1.h),

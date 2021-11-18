@@ -21,8 +21,35 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   List orderData = [];
   bool isDataFetched = false;
+  Map<String, dynamic> employeeSalesMap = {};
+
+  void calculateSales() async {
+    Map<String, dynamic> _employeeSalesMap = {};
+    Map<String, dynamic> employeeData =
+        await Provider.of<DatabaseService>(context, listen: false)
+            .getEmployeeData();
+    for (String key in employeeData.keys) {
+      _employeeSalesMap[key] = 0;
+    }
+    orderData.forEach((order) {
+      if (_employeeSalesMap.containsKey(order['orderTakenBy'])) {
+        _employeeSalesMap[order['orderTakenBy']] += order['total'];
+      }
+    });
+    setState(() {
+      employeeSalesMap = _employeeSalesMap;
+    });
+  }
+
+  @override
+  void initState() {
+    Provider.of<DatabaseService>(context, listen: false).getEmployeeData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    Provider.of<DatabaseService>(context).getEmployeeData();
     DateTime startDate =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     return Scaffold(
@@ -114,8 +141,8 @@ class _DashboardState extends State<Dashboard> {
             if (snapshot.connectionState == ConnectionState.active) {
               isDataFetched = true;
               orderData = snapshot.data!.docs;
+              calculateSales();
             }
-
             return Container(
               child: !isDataFetched
                   ? CircularProgressIndicator()
@@ -130,7 +157,7 @@ class _DashboardState extends State<Dashboard> {
                                   borderRadius: BorderRadius.circular(5.0)),
                               child: DailyLineGraph(orderData, context)),
                         ),
-                        Padding(
+                        (employeeSalesMap.keys.length > 0) ? Padding(
                           padding: EdgeInsets.all(2.h),
                           child: Container(
                               decoration: BoxDecoration(
@@ -140,17 +167,14 @@ class _DashboardState extends State<Dashboard> {
                               child: Column(
                                 children: [
                                   Row(
-                                    children: [],
-                                  ),
-                                  Row(
-                                    children: [],
-                                  ),
-                                  Row(
-                                    children: [],
+                                    children: [
+                                      Text(
+                                          '${employeeSalesMap.keys.first}:${Provider.of<DatabaseService>(context).employeeData[employeeSalesMap.keys.first]}')
+                                    ],
                                   )
                                 ],
                               )),
-                        ),
+                        ) : CircularProgressIndicator(),
                       ],
                     ),
             );

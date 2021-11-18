@@ -25,6 +25,19 @@ class DatabaseService {
     );
   }
 
+  Map<String, dynamic> employeeData = {};
+
+  Future<Map<String, dynamic>> getEmployeeData() async{
+    if (employeeData.keys.length == 0) {
+      var docs = await _profileCollection.where('role', isEqualTo: 'employee').get();
+      for (var document in docs.docs) {
+        String key = document.get('name');
+        employeeData['$key'] = document.get('monthlyTarget');
+      }
+    }
+    return employeeData;
+  }
+
   List catalog = [];
 
   Future<List> getCatalog() async {
