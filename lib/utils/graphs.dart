@@ -27,7 +27,7 @@ Widget DayBasedLineGraph(List orderData, BuildContext context) {
       .inDays;
 
   Map<String, int> orderMap = {};
-  for (int i = 0; i < dayDiff; i++) {
+  for (int i = 0; i <= dayDiff; i++) {
     DateTime newDay = startDate.add(Duration(days: i));
     String key = "${newDay.day}-${newDay.month}";
     orderMap['$key'] = 0;
@@ -292,19 +292,22 @@ Widget DailyLineGraph(List orderData, BuildContext context) {
             height: 1.h,
           ),
           Text(
-            "Daily Sales",
+            "Hourly Sales",
             style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
           ),
-          SfCartesianChart(
-              primaryXAxis: CategoryAxis(),
-              tooltipBehavior: _tooltip,
-              series: <ChartSeries>[
-                LineSeries<_ChartData, String>(
-                  dataSource: chartData,
-                  xValueMapper: (_ChartData sales, _) => sales.x,
-                  yValueMapper: (_ChartData sales, _) => sales.y,
-                ),
-              ]),
+          Container(
+            height: 25.h,
+            child: SfCartesianChart(
+                primaryXAxis: CategoryAxis(),
+                tooltipBehavior: _tooltip,
+                series: <ChartSeries>[
+                  LineSeries<_ChartData, String>(
+                    dataSource: chartData,
+                    xValueMapper: (_ChartData sales, _) => sales.x,
+                    yValueMapper: (_ChartData sales, _) => sales.y,
+                  ),
+                ]),
+          ),
         ],
       ),
     ),

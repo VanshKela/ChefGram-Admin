@@ -116,7 +116,36 @@ class _DashboardState extends State<Dashboard> {
                   ? CircularProgressIndicator()
                   : Column(
                       children: [
-                        Container(child: DailyLineGraph(orderData, context))
+                        Padding(
+                          padding: EdgeInsets.all(2.h),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 2, color: Colors.indigoAccent),
+                                  borderRadius: BorderRadius.circular(5.0)),
+                              child: DailyLineGraph(orderData, context)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(2.h),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 2, color: Colors.indigoAccent),
+                                  borderRadius: BorderRadius.circular(5.0)),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [],
+                                  ),
+                                  Row(
+                                    children: [],
+                                  ),
+                                  Row(
+                                    children: [],
+                                  )
+                                ],
+                              )),
+                        ),
                       ],
                     ),
             );
