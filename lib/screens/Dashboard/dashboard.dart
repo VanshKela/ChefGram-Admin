@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../authentication_service.dart';
+import '../../database_service.dart';
 import 'orders.dart';
 import 'catalog.dart';
 
@@ -16,43 +17,62 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
-    List<ElevatedButton> buttons = [
-      ElevatedButton(
-        child: Text(
-          "Show Catalog",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 13.sp,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Catalog()));
-        },
-      ),
-      ElevatedButton(
-        child: Text(
-          "Show All Orders",
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold),
-        ),
-        onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Orders(isFromHome: true)));
-        },
-      ),
-      ElevatedButton(
-        child: Text(
-          "Show Employees",
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold),
-        ),
-        onPressed: () {},
-      )
-    ];
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: <Color>[Colors.indigo, Colors.indigoAccent]),
+                color: Colors.indigo,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Welcome,',
+                    style: TextStyle(color: Colors.white, fontSize: 12.sp),
+                  ),
+                  Text("Admin",
+                      style: TextStyle(color: Colors.white, fontSize: 17.sp))
+                ],
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.inventory),
+              title: Text('Item Catalog',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Catalog()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.shopping_cart),
+              title: Text('Order History',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Orders(isFromHome: true)));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.people),
+              title: Text('Employee List',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              onTap: () {},
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
+        centerTitle: true,
         title: Text('Dashboard'),
         actions: [
           IconButton(
@@ -64,20 +84,8 @@ class _DashboardState extends State<Dashboard> {
         ],
       ),
       body: Center(
-        child: Container(
-          height: 40.h,
-          child: GridView.count(
-            primary: false,
-            childAspectRatio: (1 / .2),
-            crossAxisCount: 1,
-            padding: const EdgeInsets.all(20),
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            children: buttons,
-          ),
-        ),
+        child: Container(height: 40.h, child: Text("NoiceNoice Graphs")),
       ),
     );
   }
 }
-
