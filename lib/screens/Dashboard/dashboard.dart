@@ -10,6 +10,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../authentication_service.dart';
 import '../../database_service.dart';
+import 'daily_target_list.dart';
 import 'orders.dart';
 import 'catalog.dart';
 
@@ -25,7 +26,7 @@ class _DashboardState extends State<Dashboard> {
   bool isDataFetched = false;
 
   List<Widget> targetDailyWidgetList = [];
-
+  Map<String, dynamic> employeeSalesMap = {};
   void calculateSales() async {
     List<Widget> _targetDailyWidgetList = [];
     Map<String, dynamic> _employeeSalesMap = {};
@@ -42,23 +43,31 @@ class _DashboardState extends State<Dashboard> {
       }
     }
 
-    for (int i = 0; i < min(3, _employeeSalesMap.keys.length); i++) {
+    for (int i = 0; i < _employeeSalesMap.keys.length; i++) {
       _targetDailyWidgetList.add(Column(
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          EmployeeRadialGraph(
-              _employeeSalesMap[_employeeSalesMap.keys.toList()[i]],
-              Provider.of<DatabaseService>(context, listen: false)
-                  .employeeData[_employeeSalesMap.keys.toList()[i]]),
-          Text(
-            '${_employeeSalesMap.keys.toList()[i]}',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
+          Container(
+            height: 20.h,
+            child: EmployeeRadialGraph(
+                _employeeSalesMap[_employeeSalesMap.keys.toList()[i]],
+                Provider.of<DatabaseService>(context, listen: false)
+                    .employeeData[_employeeSalesMap.keys.toList()[i]]),
+          ),
+          Container(
+            height: 3.h,
+            child: Text(
+              '${_employeeSalesMap.keys.toList()[i]}',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
           ),
         ],
       ));
     }
     setState(() {
       targetDailyWidgetList = _targetDailyWidgetList;
+      employeeSalesMap = _employeeSalesMap;
     });
   }
 
@@ -172,6 +181,10 @@ class _DashboardState extends State<Dashboard> {
                           padding:
                               EdgeInsets.only(right: 2.h, left: 2.h, top: 1.h),
                           child: Container(
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: Colors.grey, width: 2),
+                                  borderRadius: BorderRadius.circular(10)),
                               child: DailyLineGraph(orderData, context)),
                         ),
                         Padding(
@@ -183,23 +196,35 @@ class _DashboardState extends State<Dashboard> {
                           ),
                         ),
                         (targetDailyWidgetList.length > 0)
-                            ? Container(
-                                height: 26.h *
-                                    ((min(4, targetDailyWidgetList.length) +
-                                            1) ~/
-                                        2),
-                                child: GridView.builder(
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                    ),
-                                    itemCount:
-                                        min(4, targetDailyWidgetList.length),
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return Container(
-                                          child: targetDailyWidgetList[index]);
-                                    }),
+                            ? GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DailyTargetPage(
+                                              data: employeeSalesMap)));
+                                },
+                                child: Container(
+                                  height: 27.h *
+                                      ((min(4, targetDailyWidgetList.length) +
+                                              1) ~/
+                                          2),
+                                  width: 95.w,
+                                  child: GridView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                      ),
+                                      itemCount:
+                                          min(4, targetDailyWidgetList.length),
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return Container(
+                                            child:
+                                                targetDailyWidgetList[index]);
+                                      }),
+                                ),
                               )
                             : CircularProgressIndicator(),
                       ],

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:chef_gram_admin/utils/RoundedButton.dart';
 import '../../constants.dart';
+import '../../database_service.dart';
 
 class AddEmployee extends StatefulWidget {
   const AddEmployee({Key? key}) : super(key: key);
@@ -18,16 +19,17 @@ class _AddEmployeeState extends State<AddEmployee> {
   final passwordController = TextEditingController();
   final nameController = TextEditingController();
   final ageController = TextEditingController();
+  final phoneNoController = TextEditingController();
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   late UserCredential userCredential;
   String role = "employee";
 
   Future<void> addUser() async {
     try {
-      userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email:
-              "${nameController.value.text.replaceAll('  ', '').toLowerCase()}@spice.com",
-          password: passwordController.value.text);
+      userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: "${phoneNoController.text.trim()}@spice.com",
+              password: passwordController.value.text);
     } on FirebaseAuthException catch (e) {
       final snackBar = SnackBar(
         backgroundColor: Colors.lightBlue,
@@ -42,6 +44,7 @@ class _AddEmployeeState extends State<AddEmployee> {
     return users.doc(userCredential.user!.uid).set({
       'name': nameController.value.text,
       'role': role,
+      'phoneNo': phoneNoController.text,
       'age': int.parse(ageController.value.text),
       'monthlyTarget': 0,
       'targetData': {'todayTarget': 0},
@@ -50,7 +53,7 @@ class _AddEmployeeState extends State<AddEmployee> {
       passwordController.clear();
       nameController.clear();
       ageController.clear();
-
+      phoneNoController.clear();
       final snackBar = SnackBar(
         backgroundColor: Colors.lightBlue,
         duration: Duration(seconds: 8),
@@ -60,6 +63,7 @@ class _AddEmployeeState extends State<AddEmployee> {
         ),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Provider.of<DatabaseService>(context, listen: false).getEmployeeData();
     }).catchError((error) {
       final snackBar = SnackBar(
         backgroundColor: Colors.lightBlue,
@@ -78,6 +82,7 @@ class _AddEmployeeState extends State<AddEmployee> {
     nameController.dispose();
     passwordController.dispose();
     ageController.dispose();
+    phoneNoController.dispose();
     super.dispose();
   }
 
@@ -106,6 +111,19 @@ class _AddEmployeeState extends State<AddEmployee> {
                   decoration: authTextFieldDecoration.copyWith(
                     labelText: "Name",
                     hintText: "Enter Full Name",
+                  ),
+                ),
+                SizedBox(
+                  height: 2.h,
+                ),
+                TextFormField(
+                  controller: phoneNoController,
+                  maxLength: 10,
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.number,
+                  decoration: authTextFieldDecoration.copyWith(
+                    labelText: "Phone Number",
+                    hintText: "Enter your phone number",
                   ),
                 ),
                 SizedBox(
