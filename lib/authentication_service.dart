@@ -14,16 +14,18 @@ class AuthenticationService with ChangeNotifier {
   }
 
   Future<String> signIn(
-      {required String name, required String password}) async {
+      {required String number, required String password}) async {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(
-          email: "$name@spice.com", password: password);
-      await FirebaseFirestore.instance.collection("users")
-          .doc(_firebaseAuth.currentUser!.uid).get()
+          email: "$number@spice.com", password: password);
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(_firebaseAuth.currentUser!.uid)
+          .get()
           .then((value) {
         print(value.exists);
         print(value.data());
-        if(value.get('role') == 'admin'){
+        if (value.get('role') == 'admin') {
           print('admin');
         } else {
           signOut();

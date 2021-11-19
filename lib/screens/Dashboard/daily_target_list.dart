@@ -43,9 +43,10 @@ class DailyTargetPage extends StatelessWidget {
                     width: 50.w,
                     height: 20.h,
                     child: EmployeeRadialGraph(
-                        this.data[this.data.keys.toList()[i]],
-                        Provider.of<DatabaseService>(context, listen: false)
-                            .employeeData[this.data.keys.toList()[i]]),
+                      this.data[this.data.keys.toList()[i]],
+                      Provider.of<DatabaseService>(context, listen: false)
+                          .employeeData[this.data.keys.toList()[i]],
+                    ),
                   )
                 ],
               ),

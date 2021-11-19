@@ -49,12 +49,12 @@ class _DashboardState extends State<Dashboard> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            height: 20.h,
-            child: EmployeeRadialGraph(
+              height: 20.h,
+              child: EmployeeRadialGraph(
                 _employeeSalesMap[_employeeSalesMap.keys.toList()[i]],
                 Provider.of<DatabaseService>(context, listen: false)
-                    .employeeData[_employeeSalesMap.keys.toList()[i]]),
-          ),
+                    .employeeData[_employeeSalesMap.keys.toList()[i]],
+              )),
           Container(
             height: 3.h,
             child: Text(
@@ -209,7 +209,7 @@ class _DashboardState extends State<Dashboard> {
                                       ((min(4, targetDailyWidgetList.length) +
                                               1) ~/
                                           2),
-                                  width: 95.w,
+                                  width: 100.w,
                                   child: GridView.builder(
                                       physics: NeverScrollableScrollPhysics(),
                                       gridDelegate:

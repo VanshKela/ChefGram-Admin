@@ -356,11 +356,14 @@ class _FilterPageState extends State<FilterPage> {
                     child: Text(
                         "${startDate.day.toString()}-${startDate.month.toString()}-${startDate.year.toString()} to ${endDate.day.toString()}-${endDate.month.toString()}-${endDate.year.toString()}"),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.calendar_today),
-                    onPressed: () {
-                      _showDialog();
-                    },
+                  Container(
+                    width: 5.w,
+                    child: IconButton(
+                      icon: Icon(Icons.calendar_today),
+                      onPressed: () {
+                        _showDialog();
+                      },
+                    ),
                   ),
                 ],
               )
