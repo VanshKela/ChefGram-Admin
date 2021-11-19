@@ -22,6 +22,7 @@ class DatabaseService {
       name: snapshot.get('name') ?? '',
       age: snapshot.get('age') ?? 0,
       role: snapshot.get('role') ?? '',
+      phoneNo: snapshot.get('phoneNo') ?? '0'
     );
   }
 

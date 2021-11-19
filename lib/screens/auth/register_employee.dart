@@ -41,14 +41,47 @@ class _AddEmployeeState extends State<AddEmployee> {
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
+    if (role == 'employee') {
+      return users.doc(userCredential.user!.uid).set({
+        'name': nameController.value.text,
+        'role': role,
+        'phoneNo': phoneNoController.text,
+        'age': int.parse(ageController.value.text),
+        'monthlyTarget': 0,
+        'targetData': {'todayTarget': 0},
+        'timeTargetUpdated': DateTime.now().subtract(Duration(days: 1)),
+      }).then((value) {
+        passwordController.clear();
+        nameController.clear();
+        ageController.clear();
+        phoneNoController.clear();
+        final snackBar = SnackBar(
+          backgroundColor: Colors.lightBlue,
+          duration: Duration(seconds: 8),
+          content: Text(
+            "Success! New User Created!",
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        Provider.of<DatabaseService>(context, listen: false).getEmployeeData();
+      }).catchError((error) {
+        final snackBar = SnackBar(
+          backgroundColor: Colors.lightBlue,
+          duration: Duration(seconds: 8),
+          content: Text(
+            error,
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      });
+    } else
     return users.doc(userCredential.user!.uid).set({
       'name': nameController.value.text,
       'role': role,
       'phoneNo': phoneNoController.text,
       'age': int.parse(ageController.value.text),
-      'monthlyTarget': 0,
-      'targetData': {'todayTarget': 0},
-      'timeTargetUpdated': DateTime.now().subtract(Duration(days: 1)),
     }).then((value) {
       passwordController.clear();
       nameController.clear();
@@ -63,7 +96,6 @@ class _AddEmployeeState extends State<AddEmployee> {
         ),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      Provider.of<DatabaseService>(context, listen: false).getEmployeeData();
     }).catchError((error) {
       final snackBar = SnackBar(
         backgroundColor: Colors.lightBlue,
