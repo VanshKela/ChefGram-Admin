@@ -43,37 +43,18 @@ class _DashboardState extends State<Dashboard> {
     }
 
     for (int i = 0; i < min(3, _employeeSalesMap.keys.length); i++) {
-      _targetDailyWidgetList.add(Padding(
-        padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 2.w),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              width: 35.w,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${_employeeSalesMap.keys.toList()[i]}',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
-                  ),
-                  Text(
-                      'Daily Target: ₹${(Provider.of<DatabaseService>(context, listen: false).employeeData[_employeeSalesMap.keys.toList()[i]] ~/ 30)}',
-                      style: TextStyle(fontSize: 12.sp)),
-                ],
-              ),
-            ),
-            Container(
-              width: 50.w,
-              height: 20.h,
-              child: EmployeeRadialGraph(
-                  _employeeSalesMap[_employeeSalesMap.keys.toList()[i]],
-                  Provider.of<DatabaseService>(context, listen: false)
-                      .employeeData[_employeeSalesMap.keys.toList()[i]]),
-            )
-          ],
-        ),
+      _targetDailyWidgetList.add(Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          EmployeeRadialGraph(
+              _employeeSalesMap[_employeeSalesMap.keys.toList()[i]],
+              Provider.of<DatabaseService>(context, listen: false)
+                  .employeeData[_employeeSalesMap.keys.toList()[i]]),
+          Text(
+            '${_employeeSalesMap.keys.toList()[i]}',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
+          ),
+        ],
       ));
     }
     setState(() {
@@ -165,68 +146,67 @@ class _DashboardState extends State<Dashboard> {
               icon: Icon(Icons.logout)),
         ],
       ),
-      body: Center(
-        child: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection('orders')
-              .where('dateTime', isGreaterThanOrEqualTo: startDate)
-              .snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (snapshot.connectionState == ConnectionState.active) {
-              isDataFetched = true;
-              orderData = snapshot.data!.docs;
-              calculateSales();
-            }
-            return SingleChildScrollView(
-              child: Container(
-                child: !isDataFetched
-                    ? CircularProgressIndicator()
-                    : Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(2.h),
-                            child: Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 2, color: Colors.indigoAccent),
-                                    borderRadius: BorderRadius.circular(5.0)),
-                                child: DailyLineGraph(orderData, context)),
-                          ),
-                          (targetDailyWidgetList.length > 0)
-                              ? Padding(
-                                  padding: EdgeInsets.all(2.h),
-                                  child: Container(
-                                    height: 23.h * targetDailyWidgetList.length,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            width: 2,
-                                            color: Colors.indigoAccent),
-                                        borderRadius:
-                                            BorderRadius.circular(5.0)),
-                                    child: ListView.builder(
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount: targetDailyWidgetList.length,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return Container(
-                                              child:
-                                                  targetDailyWidgetList[index]);
-                                        }),
-                                  ),
-                                )
-                              : CircularProgressIndicator(),
-                        ],
-                      ),
-              ),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('orders')
+            .where('dateTime', isGreaterThanOrEqualTo: startDate)
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
             );
-          },
-        ),
+          }
+          if (snapshot.connectionState == ConnectionState.active) {
+            isDataFetched = true;
+            orderData = snapshot.data!.docs;
+            calculateSales();
+          }
+          return SingleChildScrollView(
+            child: Container(
+              child: !isDataFetched
+                  ? CircularProgressIndicator()
+                  : Column(
+                      children: [
+                        Padding(
+                          padding:
+                              EdgeInsets.only(right: 2.h, left: 2.h, top: 1.h),
+                          child: Container(
+                              child: DailyLineGraph(orderData, context)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 1.h),
+                          child: Text(
+                            "Daily Progress",
+                            style: TextStyle(
+                                fontSize: 16.sp, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        (targetDailyWidgetList.length > 0)
+                            ? Container(
+                                height: 26.h *
+                                    ((min(4, targetDailyWidgetList.length) +
+                                            1) ~/
+                                        2),
+                                child: GridView.builder(
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                    ),
+                                    itemCount:
+                                        min(4, targetDailyWidgetList.length),
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                          child: targetDailyWidgetList[index]);
+                                    }),
+                              )
+                            : CircularProgressIndicator(),
+                      ],
+                    ),
+            ),
+          );
+        },
       ),
     );
   }

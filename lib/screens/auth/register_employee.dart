@@ -24,10 +24,10 @@ class _AddEmployeeState extends State<AddEmployee> {
 
   Future<void> addUser() async {
     try {
-      userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: "${nameController.value.text}@spice.com",
-              password: passwordController.value.text);
+      userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email:
+              "${nameController.value.text.replaceAll('  ', '').toLowerCase()}@spice.com",
+          password: passwordController.value.text);
     } on FirebaseAuthException catch (e) {
       final snackBar = SnackBar(
         backgroundColor: Colors.lightBlue,
