@@ -10,6 +10,7 @@ import 'package:sizer/sizer.dart';
 
 import '../../authentication_service.dart';
 import '../../database_service.dart';
+import 'add_beat.dart';
 import 'daily_target_list.dart';
 import 'orders.dart';
 import 'catalog.dart';
@@ -140,6 +141,16 @@ class _DashboardState extends State<Dashboard> {
                     MaterialPageRoute(builder: (context) => AddEmployee()));
               },
             ),
+            ListTile(
+              leading: Icon(Icons.location_on),
+              title: Text('Add Beat',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AddBeat()));
+              },
+            ),
           ],
         ),
       ),
@@ -211,7 +222,6 @@ class _DashboardState extends State<Dashboard> {
                                           2),
                                   width: 100.w,
                                   child: GridView.builder(
-                                      physics: NeverScrollableScrollPhysics(),
                                       gridDelegate:
                                           SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2,
