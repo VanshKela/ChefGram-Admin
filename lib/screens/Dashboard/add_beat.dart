@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
 
+import 'add_shops.dart';
+
 class AddBeat extends StatefulWidget {
   const AddBeat({Key? key}) : super(key: key);
 
@@ -78,6 +80,7 @@ class _AddBeatState extends State<AddBeat> {
           if (beats.contains(beat.text)) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text("Beat Already Exists"),
+              backgroundColor: Colors.blue,
               duration: Duration(milliseconds: 600),
             ));
           } else {

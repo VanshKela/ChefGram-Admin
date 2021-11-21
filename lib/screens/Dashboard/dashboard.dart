@@ -11,6 +11,7 @@ import 'package:sizer/sizer.dart';
 import '../../authentication_service.dart';
 import '../../database_service.dart';
 import 'add_beat.dart';
+import 'add_shops.dart';
 import 'daily_target_list.dart';
 import 'orders.dart';
 import 'catalog.dart';
@@ -149,6 +150,16 @@ class _DashboardState extends State<Dashboard> {
                 Navigator.pop(context);
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => AddBeat()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.house),
+              title: Text('Add Shops',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => AddShop()));
               },
             ),
           ],
