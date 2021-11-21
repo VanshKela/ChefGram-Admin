@@ -75,8 +75,26 @@ class _AddBeatState extends State<AddBeat> {
             .get();
         if (cityDoc.exists) {
           List beats = cityDoc.get('beats');
-          beats.contains(beat.text);
-          print(beats.contains(beat.text));
+          if (beats.contains(beat.text)) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Beat Already Exists"),
+              duration: Duration(milliseconds: 600),
+            ));
+          } else {
+            beats.add(beat.text);
+            await FirebaseFirestore.instance
+                .collection('states/${state.text}/cities')
+                .doc(city.text)
+                .update({'beats': beats});
+          }
+        } else {
+          await FirebaseFirestore.instance
+              .collection('states/${state.text}/cities')
+              .doc(city.text)
+              .set({
+            'cityName': city.text,
+            'beats': [beat.text]
+          });
         }
       } else {
         await FirebaseFirestore.instance
