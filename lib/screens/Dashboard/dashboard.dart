@@ -158,7 +158,7 @@ class _DashboardState extends State<Dashboard> {
                   style: TextStyle(fontWeight: FontWeight.bold)),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushReplacement(context,
+                Navigator.push(context,
                     MaterialPageRoute(builder: (context) => AddShop()));
               },
             ),
