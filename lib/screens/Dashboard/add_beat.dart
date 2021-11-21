@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:chef_gram_admin/models/city_model.dart';
 import 'package:chef_gram_admin/models/state_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
@@ -79,6 +80,11 @@ class _AddBeatState extends State<AddBeat> {
           beats.contains(beat.text);
           print(beats.contains(beat.text));
         }
+      } else {
+        FirebaseFirestore.instance.collection('states').doc(state.text).set({
+          "stateName": "${state.text}",
+          "cities": ['/cities/${city.text}']
+        });
       }
       // print(cityDoc);
     }
