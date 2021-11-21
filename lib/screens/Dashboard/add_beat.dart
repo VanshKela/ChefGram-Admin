@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:chef_gram_admin/models/city_model.dart';
 import 'package:chef_gram_admin/models/state_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
@@ -66,7 +65,6 @@ class _AddBeatState extends State<AddBeat> {
           .collection('states')
           .doc(state.text)
           .get();
-      // var cityDoc = await stateDoc.collection('cities').doc(city.text).
       print(stateDoc);
       if (stateDoc.exists) {
         var cityDoc = await FirebaseFirestore.instance
@@ -81,9 +79,19 @@ class _AddBeatState extends State<AddBeat> {
           print(beats.contains(beat.text));
         }
       } else {
-        FirebaseFirestore.instance.collection('states').doc(state.text).set({
+        await FirebaseFirestore.instance
+            .collection('states')
+            .doc(state.text)
+            .set({
           "stateName": "${state.text}",
-          "cities": ['/cities/${city.text}']
+        }).then((value) async {
+          await FirebaseFirestore.instance
+              .collection('states/${state.text}/cities')
+              .doc(city.text)
+              .set({
+            'cityName': city.text,
+            'beats': [beat.text]
+          });
         });
       }
       // print(cityDoc);
