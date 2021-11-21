@@ -1,4 +1,5 @@
 import 'package:chef_gram_admin/models/profile_model.dart';
+import 'package:chef_gram_admin/screens/Dashboard/profile.dart';
 import 'package:chef_gram_admin/screens/auth/register_employee.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -66,12 +67,14 @@ class _ShowEmployeesState extends State<ShowEmployees> {
                                             fontWeight: FontWeight.w700),
                                       ),
                                       onTap: () {
-                                        // Navigator.push(
-                                        //   context,
-                                        //   MaterialPageRoute(
-                                        //     builder: (context) => ,
-                                        //   ),
-                                        // );
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ProfilePage(
+                                              id: document.id,
+                                            ),
+                                          ),
+                                        );
                                       },
                                     ),
                                     GestureDetector(
