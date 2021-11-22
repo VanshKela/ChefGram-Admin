@@ -1,3 +1,4 @@
+import 'package:chef_gram_admin/screens/Dashboard/report_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -90,6 +91,9 @@ class _ReportPageState extends State<ReportPage> {
                       return Column(
                         children: [
                           ListTile(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>Report(snapshot: snapshot.data[index])));
+                            },
                             leading:
                                 CircleAvatar(child: Icon(Icons.date_range)),
                             title: Text(
