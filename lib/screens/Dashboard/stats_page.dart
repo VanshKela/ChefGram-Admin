@@ -1,10 +1,7 @@
-import 'dart:math';
-
 import 'package:chef_gram_admin/database_service.dart';
 import 'package:chef_gram_admin/utils/graphs.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 class StatsPage extends StatefulWidget {
   const StatsPage({Key? key, required this.orderData}) : super(key: key);
