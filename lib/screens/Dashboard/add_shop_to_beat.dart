@@ -30,7 +30,9 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
         'email': emailController.text,
         'phoneNo': phoneNoController.text,
         'shopName': shopNameController.text,
-        'shopOwner': shopOwnerController.text
+        'shopOwner': shopOwnerController.text,
+        'latitude': double.parse(latitudeController.text),
+        'longitude': double.parse(longitudeController.text)
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Shop Added"),
@@ -51,12 +53,16 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
   final shopOwnerController = TextEditingController();
   final phoneNoController = TextEditingController();
   final emailController = TextEditingController();
+  final latitudeController = TextEditingController();
+  final longitudeController = TextEditingController();
   void dispose() {
     addressController.dispose();
     phoneNoController.dispose();
     shopOwnerController.dispose();
     shopNameController.dispose();
     emailController.dispose();
+    longitudeController.dispose();
+    latitudeController.dispose();
     super.dispose();
   }
 
@@ -126,6 +132,28 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
                       height: 2.h,
                     ),
                     TextFormField(
+                      controller: latitudeController,
+                      keyboardType: TextInputType.number,
+                      decoration: authTextFieldDecoration.copyWith(
+                        labelText: "Latitude",
+                        hintText: "Enter Latitude",
+                      ),
+                    ),
+                    SizedBox(
+                      height: 2.h,
+                    ),
+                    TextFormField(
+                      controller: longitudeController,
+                      keyboardType: TextInputType.number,
+                      decoration: authTextFieldDecoration.copyWith(
+                        labelText: "Longitude",
+                        hintText: "Enter Longitude",
+                      ),
+                    ),
+                    SizedBox(
+                      height: 2.h,
+                    ),
+                    TextFormField(
                       controller: addressController,
                       decoration: authTextFieldDecoration.copyWith(
                         labelText: "Address",
@@ -171,6 +199,8 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
                 shopOwnerController.clear();
                 shopNameController.clear();
                 emailController.clear();
+                latitudeController.clear();
+                longitudeController.clear();
               },
             )
           ],
