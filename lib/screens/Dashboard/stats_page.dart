@@ -34,7 +34,17 @@ class _StatsPageState extends State<StatsPage> {
 
   void getExcel() async{
     final xlsio.Workbook workbook = new xlsio.Workbook();
-    workbook.worksheets[0];
+    xlsio.Worksheet sheet = workbook.worksheets[0];
+    int row = 1;
+    widget.orderData.forEach((order) {
+      String shopName = order.get('shopName');
+      List items = order.get('items');
+      for (int i=0; i<items.length;i++) {
+        sheet.getRangeByIndex(row, 1).setText(shopName);
+        sheet.getRangeByIndex(row, 2).setText(items[i]['name']);
+        row++;
+      }
+    });
     final List<int> bytes = workbook.saveAsStream();
     workbook.dispose();
 
