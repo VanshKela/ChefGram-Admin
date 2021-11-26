@@ -50,7 +50,7 @@ dependencies:
   firebase_database: ^8.1.0
   path_provider: ^2.0.7
   syncfusion_flutter_xlsio: ^19.3.55-beta
-  
+  flutter_overlay_loader: ^1.0.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -86,6 +86,9 @@ flutter:
         - asset: Fonts/SFProDisplay-Regular.ttf
   assets:
     - assets/
+    - images/
+
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
