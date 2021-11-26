@@ -65,7 +65,8 @@ class _LogInPageState extends State<LogInPage> {
                       child: Column(
                         children: [
                           Text(
-                            "Log in to Chef Gram",
+                            "Log in to Chef Gram Admin",
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 20.sp, fontWeight: FontWeight.bold),
                           ),
