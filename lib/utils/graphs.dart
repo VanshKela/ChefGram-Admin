@@ -313,7 +313,7 @@ Widget EmployeeRadialGraph(int sales, int target) {
       'Daily Sale',
       (sales / target) * 100,
       "${((sales / target) * 100).toStringAsFixed(2)} %",
-      const Color(0xff7986cb),
+      Color(0xff2372A3),
     ),
   ];
   TooltipBehavior _tooltip = TooltipBehavior(enable: true);
