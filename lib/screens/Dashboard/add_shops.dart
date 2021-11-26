@@ -200,14 +200,22 @@ class _AddShopState extends State<AddShop> {
                 child: ElevatedButton(
                   child: Text("Continue"),
                   onPressed: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AddShopToBeat(
-                                  state: state,
-                                  city: city,
-                                  beat: beat,
-                                )));
+                    if ((state != null) && (city != null) && (beat != null)) {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddShopToBeat(
+                                    state: state,
+                                    city: city,
+                                    beat: beat,
+                                  )));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Select all Fields!"),
+                        backgroundColor: Colors.red,
+                        duration: Duration(milliseconds: 1600),
+                      ));
+                    }
                   },
                 ),
               )

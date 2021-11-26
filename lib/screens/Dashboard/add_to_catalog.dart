@@ -27,14 +27,12 @@ class _AddToCatalogState extends State<AddToCatalog> {
   CollectionReference catalog =
       FirebaseFirestore.instance.collection('catalog');
 
-  // FilePickerResult? result;
   Future selectFile() async {
     final XFile? pickedFile =
         await _picker.pickImage(source: ImageSource.gallery);
     setState(() {
       image = pickedFile;
     });
-    // result = await FilePicker.platform.pickFiles(withData: true);
   }
 
   Future addToCatalog() async {

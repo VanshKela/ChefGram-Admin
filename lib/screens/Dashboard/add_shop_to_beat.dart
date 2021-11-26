@@ -27,25 +27,34 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
         'beat': widget.beat,
         'state': widget.state,
         'city': widget.city,
-        'email': emailController.text,
-        'phoneNo': phoneNoController.text,
+        'email': emailController.text.isEmpty ? 'none' : emailController.text,
+        'phoneNo': phoneNoController.text.isEmpty
+            ? '0'
+            : (double.parse(phoneNoController.text).toInt()).toString(),
         'shopName': shopNameController.text,
         'shopOwner': shopOwnerController.text,
         'latitude': double.parse(latitudeController.text),
         'longitude': double.parse(longitudeController.text)
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Shop Added"),
+        content: Text("Shop added"),
         backgroundColor: Colors.blue,
-        duration: Duration(milliseconds: 1600),
+        duration: Duration(milliseconds: 2500),
       ));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(e.toString()),
-        backgroundColor: Colors.blue,
-        duration: Duration(milliseconds: 600),
+        backgroundColor: Colors.red,
+        duration: Duration(milliseconds: 2500),
       ));
     }
+    addressController.clear();
+    phoneNoController.clear();
+    shopOwnerController.clear();
+    shopNameController.clear();
+    emailController.clear();
+    latitudeController.clear();
+    longitudeController.clear();
   }
 
   final addressController = TextEditingController();
@@ -55,6 +64,7 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
   final emailController = TextEditingController();
   final latitudeController = TextEditingController();
   final longitudeController = TextEditingController();
+
   void dispose() {
     addressController.dispose();
     phoneNoController.dispose();
@@ -63,8 +73,11 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
     emailController.dispose();
     longitudeController.dispose();
     latitudeController.dispose();
+
     super.dispose();
   }
+
+  final formGlobalKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -74,136 +87,166 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 2.h,
-            ),
-            Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 2.h,
-                    ),
-                    TextFormField(
-                      enabled: false,
-                      decoration: authTextFieldDecoration.copyWith(
-                          labelText: widget.state),
-                    ),
-                    SizedBox(
-                      height: 2.h,
-                    ),
-                    TextFormField(
-                      enabled: false,
-                      decoration: authTextFieldDecoration.copyWith(
-                          labelText: widget.city),
-                    ),
-                    SizedBox(
-                      height: 2.h,
-                    ),
-                    TextFormField(
-                      enabled: false,
-                      decoration: authTextFieldDecoration.copyWith(
-                          labelText: widget.beat),
-                    ),
-                    SizedBox(
-                      height: 2.h,
-                    ),
-                    TextFormField(
-                      controller: shopNameController,
-                      decoration: authTextFieldDecoration.copyWith(
-                        labelText: "Shop Owner",
-                        hintText: "Enter Shop Owner",
+        child: Form(
+          key: formGlobalKey,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 2.h,
+              ),
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 2.h,
                       ),
-                    ),
-                    SizedBox(
-                      height: 2.h,
-                    ),
-                    TextFormField(
-                      controller: shopOwnerController,
-                      decoration: authTextFieldDecoration.copyWith(
-                        labelText: "Shop Name",
-                        hintText: "Enter Shop Name",
+                      TextFormField(
+                        enabled: false,
+                        decoration: authTextFieldDecoration.copyWith(
+                            labelText: widget.state),
                       ),
-                    ),
-                    SizedBox(
-                      height: 2.h,
-                    ),
-                    TextFormField(
-                      controller: latitudeController,
-                      keyboardType: TextInputType.number,
-                      decoration: authTextFieldDecoration.copyWith(
-                        labelText: "Latitude",
-                        hintText: "Enter Latitude",
+                      SizedBox(
+                        height: 2.h,
                       ),
-                    ),
-                    SizedBox(
-                      height: 2.h,
-                    ),
-                    TextFormField(
-                      controller: longitudeController,
-                      keyboardType: TextInputType.number,
-                      decoration: authTextFieldDecoration.copyWith(
-                        labelText: "Longitude",
-                        hintText: "Enter Longitude",
+                      TextFormField(
+                        enabled: false,
+                        decoration: authTextFieldDecoration.copyWith(
+                            labelText: widget.city),
                       ),
-                    ),
-                    SizedBox(
-                      height: 2.h,
-                    ),
-                    TextFormField(
-                      controller: addressController,
-                      decoration: authTextFieldDecoration.copyWith(
-                        labelText: "Address",
-                        hintText: "Enter your Address",
+                      SizedBox(
+                        height: 2.h,
                       ),
-                    ),
-                    SizedBox(
-                      height: 2.h,
-                    ),
-                    TextFormField(
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: authTextFieldDecoration.copyWith(
-                        labelText: "Shop Email",
-                        hintText: "Enter Shop Owner email",
+                      TextFormField(
+                        enabled: false,
+                        decoration: authTextFieldDecoration.copyWith(
+                            labelText: widget.beat),
                       ),
-                    ),
-                    SizedBox(
-                      height: 2.h,
-                    ),
-                    TextFormField(
-                      controller: phoneNoController,
-                      keyboardType: TextInputType.number,
-                      maxLength: 10,
-                      decoration: authTextFieldDecoration.copyWith(
-                        labelText: "Phone Number",
-                        hintText: "Enter Phone Number",
+                      SizedBox(
+                        height: 2.h,
                       ),
-                    ),
-                    SizedBox(
-                      height: 2.h,
-                    ),
-                  ],
+                      TextFormField(
+                        controller: shopNameController,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Required';
+                          }
+                          return null;
+                        },
+                        decoration: authTextFieldDecoration.copyWith(
+                          labelText: "Shop Owner",
+                          hintText: "Enter Shop Owner",
+                        ),
+                      ),
+                      SizedBox(
+                        height: 2.h,
+                      ),
+                      TextFormField(
+                        controller: shopOwnerController,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Required';
+                          }
+                          return null;
+                        },
+                        decoration: authTextFieldDecoration.copyWith(
+                          labelText: "Shop Name",
+                          hintText: "Enter Shop Name",
+                        ),
+                      ),
+                      SizedBox(
+                        height: 2.h,
+                      ),
+                      TextFormField(
+                        controller: latitudeController,
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Required';
+                          }
+                          return null;
+                        },
+                        decoration: authTextFieldDecoration.copyWith(
+                          labelText: "Latitude",
+                          hintText: "Enter Latitude",
+                        ),
+                      ),
+                      SizedBox(
+                        height: 2.h,
+                      ),
+                      TextFormField(
+                        controller: longitudeController,
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Required';
+                          }
+                          return null;
+                        },
+                        decoration: authTextFieldDecoration.copyWith(
+                          labelText: "Longitude",
+                          hintText: "Enter Longitude",
+                        ),
+                      ),
+                      SizedBox(
+                        height: 2.h,
+                      ),
+                      TextFormField(
+                        controller: addressController,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Required';
+                          }
+                          return null;
+                        },
+                        decoration: authTextFieldDecoration.copyWith(
+                          labelText: "Address",
+                          hintText: "Enter your Address",
+                        ),
+                      ),
+                      SizedBox(
+                        height: 2.h,
+                      ),
+                      TextFormField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: authTextFieldDecoration.copyWith(
+                          labelText: "Shop Email",
+                          hintText: "Enter Shop Owner email",
+                        ),
+                      ),
+                      SizedBox(
+                        height: 2.h,
+                      ),
+                      TextFormField(
+                        controller: phoneNoController,
+                        keyboardType: TextInputType.number,
+                        maxLength: 10,
+                        decoration: authTextFieldDecoration.copyWith(
+                          labelText: "Phone Number",
+                          hintText: "Enter Phone Number",
+                        ),
+                      ),
+                      SizedBox(
+                        height: 2.h,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            ElevatedButton(
-              child: Text("Add Shop"),
-              onPressed: () {
-                addShopToBeat();
-                addressController.clear();
-                phoneNoController.clear();
-                shopOwnerController.clear();
-                shopNameController.clear();
-                emailController.clear();
-                latitudeController.clear();
-                longitudeController.clear();
-              },
-            )
-          ],
+              ElevatedButton(
+                child: Text("Add Shop"),
+                onPressed: () {
+                  if (formGlobalKey.currentState!.validate()) {
+                    formGlobalKey.currentState!.save();
+
+                    addShopToBeat();
+                  }
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
