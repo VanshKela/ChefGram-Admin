@@ -53,7 +53,7 @@ class _DashboardState extends State<Dashboard> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-              height: 20.h,
+              height: 18.h,
               child: EmployeeRadialGraph(
                 _employeeSalesMap[_employeeSalesMap.keys.toList()[i]],
                 Provider.of<DatabaseService>(context, listen: false)
@@ -279,8 +279,9 @@ class _DashboardState extends State<Dashboard> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           10)),
-                                              child:
-                                                  targetDailyWidgetList[index]),
+                                              child: SingleChildScrollView(
+                                                  child: targetDailyWidgetList[
+                                                      index])),
                                         );
                                       }),
                                 ),

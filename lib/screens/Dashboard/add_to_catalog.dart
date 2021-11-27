@@ -127,7 +127,7 @@ class _AddToCatalogState extends State<AddToCatalog> {
                     textAlign: TextAlign.center,
                     keyboardType: TextInputType.number,
                     decoration: authTextFieldDecoration.copyWith(
-                      labelText: "Quantity",
+                      labelText: "Quantity(in grams)",
                       hintText: "Enter quantity in grams",
                     ),
                     validator: (value) {

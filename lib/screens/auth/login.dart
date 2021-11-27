@@ -117,7 +117,6 @@ class _LogInPageState extends State<LogInPage> {
                               onPressed: () async {
                                 if (formGlobalKey.currentState!.validate()) {
                                   formGlobalKey.currentState!.save();
-
                                   await context
                                       .read<AuthenticationService>()
                                       .signIn(
@@ -126,17 +125,10 @@ class _LogInPageState extends State<LogInPage> {
                                               passwordController.text.trim())
                                       .then((value) {
                                     if (value == 'Signed In Successfully') {
-                                      Navigator.pushReplacement(
+                                      Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) => MyApp()));
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                        content: Text(value),
-                                        backgroundColor: Colors.red,
-                                        duration: Duration(milliseconds: 4000),
-                                      ));
                                     }
                                   });
                                 }

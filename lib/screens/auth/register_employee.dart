@@ -99,6 +99,7 @@ class _AddEmployeeState extends State<AddEmployee> {
           ),
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        Loader.hide();
       }).catchError((error) {
         final snackBar = SnackBar(
           backgroundColor: Colors.lightBlue,
