@@ -123,14 +123,7 @@ class _LogInPageState extends State<LogInPage> {
                                           number: phoneNoController.text.trim(),
                                           password:
                                               passwordController.text.trim())
-                                      .then((value) {
-                                    if (value == 'Signed In Successfully') {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => MyApp()));
-                                    }
-                                  });
+
                                 }
                               },
                               text: "LOG IN",
