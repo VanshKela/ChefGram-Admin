@@ -261,7 +261,12 @@ class _AddEmployeeState extends State<AddEmployee> {
                     alignment: Alignment.center,
                     child: RoundedButton(
                       color: Color(0xFF004AAD),
-                      onPressed: addUser,
+                      onPressed: () {
+                        if (formGlobalKey.currentState!.validate()) {
+                          formGlobalKey.currentState!.save();
+                          addUser();
+                        }
+                      },
                       text: "Add Employee",
                     ),
                   ),
