@@ -1,5 +1,6 @@
 import 'package:chef_gram_admin/utils/RoundedButton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:provider/src/provider.dart';
 import 'package:sizer/sizer.dart';
 import '../../authentication_service.dart';
@@ -23,6 +24,7 @@ class _LogInPageState extends State<LogInPage> {
   void dispose() {
     phoneNoController.dispose();
     passwordController.dispose();
+    Loader.hide();
     super.dispose();
   }
 
@@ -117,13 +119,27 @@ class _LogInPageState extends State<LogInPage> {
                               onPressed: () async {
                                 if (formGlobalKey.currentState!.validate()) {
                                   formGlobalKey.currentState!.save();
+                                  Loader.show(context);
                                   await context
                                       .read<AuthenticationService>()
                                       .signIn(
                                           number: phoneNoController.text.trim(),
                                           password:
                                               passwordController.text.trim())
-
+                                      .then((value) => {
+                                            if (value !=
+                                                "Signed In Successfully")
+                                              {
+                                                Loader.hide(),
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                  content: Text(value),
+                                                  backgroundColor: Colors.red,
+                                                  duration: Duration(
+                                                      milliseconds: 3000),
+                                                ))
+                                              }
+                                          });
                                 }
                               },
                               text: "LOG IN",
