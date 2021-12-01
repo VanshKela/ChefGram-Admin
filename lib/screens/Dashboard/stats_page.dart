@@ -22,6 +22,7 @@ class _StatsPageState extends State<StatsPage> {
     Filters filter =
         Provider.of<DatabaseService>(context, listen: false).filters;
     graphs.add(DayBasedLineGraph(widget.orderData, context));
+    graphs.add(ECOBarGraph(widget.orderData));
     if (filter.employee == null)
       graphs.add(EmployeeBarGraph(widget.orderData, context));
     if (filter.state == null)

@@ -352,3 +352,56 @@ class _RadialChartData {
   final Color color;
   final String text;
 }
+
+Widget ECOBarGraph(List orderData) {
+  List<_ChartData> data = [];
+  Map<String, int> orderMap = {};
+  orderData.forEach((order) {
+    print(order.id);
+    String key = "${order['shopName']}, ${order['beat']}, ${order['city']}";
+    if (orderMap.containsKey(key))
+      orderMap[key] =
+      (orderMap[key]! + order['total']) as int;
+    else
+      orderMap[key] = order['total'];
+  });
+  orderMap.forEach((key, value) {
+    data.add(_ChartData(key, value));
+  });
+  TooltipBehavior _tooltip = TooltipBehavior(enable: true);
+  return Padding(
+    padding: EdgeInsets.symmetric(vertical: 1.h),
+    child: Column(
+      children: [
+        Text("Shop-vise Sales",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold)),
+        Scrollbar(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Container(
+                width: data.length < 8 ? 100.w : 100.0 * data.length,
+                child: SfCartesianChart(
+                    primaryXAxis: CategoryAxis(),
+                    primaryYAxis: NumericAxis(
+                        minimum: 0,
+                        maximum: orderMap.values.reduce(max).toDouble(),
+                        interval: 1000),
+                    tooltipBehavior: _tooltip,
+                    series: <ChartSeries<_ChartData, String>>[
+                      ColumnSeries<_ChartData, String>(
+                          dataSource: data,
+                          xValueMapper: (_ChartData data, _) =>
+                          data.x.length < 10
+                              ? data.x
+                              : data.x.substring(0, 10),
+                          yValueMapper: (_ChartData data, _) => data.y,
+                          name: 'Gold',
+                          color: Color.fromRGBO(8, 142, 255, 1))
+                    ])),
+          ),
+        ),
+      ],
+    ),
+  );
+}
