@@ -24,7 +24,7 @@ class _CreateTargetState extends State<CreateTarget> {
 
   Future<void> setTarget() async {
     var targetData = {
-      'monthlyTarget': int.parse(monthlyTargetController.value.text),
+      'monthlyTarget': double.parse(monthlyTargetController.value.text).toInt(),
     };
     await document.update(targetData);
     Navigator.pushReplacement(

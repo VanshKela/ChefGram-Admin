@@ -313,35 +313,28 @@ Widget EmployeeRadialGraph(int sales, int target) {
       'Daily Sale',
       (sales / target) * 100,
       "${((sales / target) * 100).toStringAsFixed(2)} %",
-      const Color(0xff7986cb),
+      Color(0xff2372A3),
     ),
   ];
   TooltipBehavior _tooltip = TooltipBehavior(enable: true);
-  return Container(
-    width: 45.w,
-    height: 20.h,
-    child: Padding(
-      padding: EdgeInsets.symmetric(vertical: 1.h),
-      child: SfCircularChart(
-          tooltipBehavior: _tooltip,
-          series: <CircularSeries<_RadialChartData, String>>[
-            RadialBarSeries<_RadialChartData, String>(
-                maximumValue: 100,
-                radius: '100%',
-                gap: '3%',
-                dataSource: chartData,
-                cornerStyle: CornerStyle.bothCurve,
-                xValueMapper: (_RadialChartData data, _) => data.xData,
-                yValueMapper: (_RadialChartData data, _) => data.yData,
-                dataLabelSettings: DataLabelSettings(
-                    isVisible: true,
-                    textStyle:
-                        TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                dataLabelMapper: (_RadialChartData data, _) => data.text,
-                pointColorMapper: (_RadialChartData data, _) => data.color),
-          ]),
-    ),
-  );
+  return SfCircularChart(
+      tooltipBehavior: _tooltip,
+      series: <CircularSeries<_RadialChartData, String>>[
+        RadialBarSeries<_RadialChartData, String>(
+            maximumValue: 100,
+            radius: '100%',
+            gap: '3%',
+            dataSource: chartData,
+            cornerStyle: CornerStyle.bothCurve,
+            xValueMapper: (_RadialChartData data, _) => data.xData,
+            yValueMapper: (_RadialChartData data, _) => data.yData,
+            dataLabelSettings: DataLabelSettings(
+                isVisible: true,
+                textStyle:
+                    TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+            dataLabelMapper: (_RadialChartData data, _) => data.text,
+            pointColorMapper: (_RadialChartData data, _) => data.color),
+      ]);
 }
 
 class _RadialChartData {

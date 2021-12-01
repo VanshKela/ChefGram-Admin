@@ -273,18 +273,29 @@ class _DeleteShopState extends State<DeleteShop> {
                 child: ElevatedButton(
                   child: Text("Delete Shop"),
                   onPressed: () {
-                    deleteShop();
-                    setState(() {
-                      state = null;
-                      city = null;
-                      beat = null;
-                      shop = null;
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("Shop deleted"),
-                      backgroundColor: Colors.blue,
-                      duration: Duration(milliseconds: 600),
-                    ));
+                    if (state != null &&
+                        city != null &&
+                        beat != null &&
+                        shop != null) {
+                      deleteShop();
+                      setState(() {
+                        state = null;
+                        city = null;
+                        beat = null;
+                        shop = null;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Shop deleted"),
+                        backgroundColor: Colors.blue,
+                        duration: Duration(milliseconds: 600),
+                      ));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Select all fields first!"),
+                        backgroundColor: Colors.red,
+                        duration: Duration(milliseconds: 600),
+                      ));
+                    }
                   },
                 ),
               )

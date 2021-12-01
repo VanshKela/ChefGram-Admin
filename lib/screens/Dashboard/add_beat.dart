@@ -5,6 +5,7 @@ import 'package:chef_gram_admin/models/state_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:sizer/sizer.dart';
 
 import 'add_shops.dart';
@@ -67,7 +68,7 @@ class _AddBeatState extends State<AddBeat> {
           .collection('states')
           .doc(state.text)
           .get();
-      print(stateDoc);
+
       if (stateDoc.exists) {
         var cityDoc = await FirebaseFirestore.instance
             .collection('states')
@@ -117,6 +118,7 @@ class _AddBeatState extends State<AddBeat> {
       }
       // print(cityDoc);
     }
+    Navigator.pop(context);
   }
 
   @override
@@ -130,6 +132,7 @@ class _AddBeatState extends State<AddBeat> {
     state.dispose();
     city.dispose();
     beat.dispose();
+    Loader.hide();
     super.dispose();
   }
 
@@ -189,7 +192,19 @@ class _AddBeatState extends State<AddBeat> {
                 ElevatedButton(
                   child: Text("Add Beat"),
                   onPressed: () {
-                    addBeatToCloud();
+                    if (state.text.isNotEmpty &&
+                        city.text.isNotEmpty &&
+                        beat.text.isNotEmpty) {
+                      Loader.show(context);
+                      addBeatToCloud();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Select all fields'),
+                        backgroundColor: Colors.red,
+                        duration: Duration(milliseconds: 4000),
+                      ));
+                    }
+
                     // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>AddShops(data:data)));
                   },
                 ),

@@ -23,10 +23,7 @@ class AuthenticationService with ChangeNotifier {
           .doc(_firebaseAuth.currentUser!.uid)
           .get()
           .then((value) {
-        print(value.exists);
-        print(value.data());
         if (value.get('role') == 'admin') {
-          print('admin');
         } else {
           signOut();
         }
