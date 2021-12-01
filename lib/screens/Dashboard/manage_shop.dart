@@ -1,11 +1,13 @@
 import 'package:chef_gram_admin/models/profile_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../database_service.dart';
 import 'add_shop_to_beat.dart';
+import 'edit_shop.dart';
 
 class DeleteShop extends StatefulWidget {
   const DeleteShop({Key? key}) : super(key: key);
@@ -26,6 +28,13 @@ class _DeleteShopState extends State<DeleteShop> {
   List<String> stateList = [];
   List<String> cityList = [];
   List<String> shops = [];
+
+  @override
+  void dispose() {
+    Loader.hide();
+    super.dispose();
+  }
+
   void getStates() async {
     List<String> _stateList = [];
     var statesRef = await stateCollection.get();
@@ -269,35 +278,75 @@ class _DeleteShopState extends State<DeleteShop> {
                   ],
                 ),
               ),
-              Center(
-                child: ElevatedButton(
-                  child: Text("Delete Shop"),
-                  onPressed: () {
-                    if (state != null &&
-                        city != null &&
-                        beat != null &&
-                        shop != null) {
-                      deleteShop();
-                      setState(() {
-                        state = null;
-                        city = null;
-                        beat = null;
-                        shop = null;
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("Shop deleted"),
-                        backgroundColor: Colors.blue,
-                        duration: Duration(milliseconds: 600),
-                      ));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("Select all fields first!"),
-                        backgroundColor: Colors.red,
-                        duration: Duration(milliseconds: 600),
-                      ));
-                    }
-                  },
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ElevatedButton(
+                    child: Text("Edit Shop"),
+                    onPressed: () async {
+                      if (state != null &&
+                          city != null &&
+                          beat != null &&
+                          shop != null) {
+                        Loader.show(context);
+                        await FirebaseFirestore.instance
+                            .collection('shops')
+                            .where('state', isEqualTo: state)
+                            .where('city', isEqualTo: city)
+                            .where('beat', isEqualTo: beat)
+                            .where('shopName', isEqualTo: shop)
+                            .get()
+                            .then((value) {
+                          Loader.hide();
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditShop(
+                                      data: value.docs.first,
+                                      id: value.docs.first.id)));
+                        });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Select all fields first!"),
+                          backgroundColor: Colors.red,
+                          duration: Duration(milliseconds: 600),
+                        ));
+                      }
+                    },
+                  ),
+                  ElevatedButton(
+                    child: Text("Delete Shop"),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.red.shade400),
+                    ),
+                    onPressed: () {
+                      if (state != null &&
+                          city != null &&
+                          beat != null &&
+                          shop != null) {
+                        deleteShop();
+                        setState(() {
+                          state = null;
+                          city = null;
+                          beat = null;
+                          shop = null;
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Shop deleted"),
+                          backgroundColor: Colors.blue,
+                          duration: Duration(milliseconds: 600),
+                        ));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Select all fields first!"),
+                          backgroundColor: Colors.red,
+                          duration: Duration(milliseconds: 600),
+                        ));
+                      }
+                    },
+                  ),
+                ],
               )
             ],
           ),
