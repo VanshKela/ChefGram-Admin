@@ -22,7 +22,7 @@ class AddShopToBeat extends StatefulWidget {
 class _AddShopToBeatState extends State<AddShopToBeat> {
   void addShopToBeat() async {
     try {
-      FirebaseFirestore.instance.collection('shops').add({
+      await FirebaseFirestore.instance.collection('shops').add({
         'address': addressController.text,
         'beat': widget.beat,
         'state': widget.state,
@@ -36,7 +36,30 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
         'latitude': double.parse(latitudeController.text),
         'longitude': double.parse(longitudeController.text),
         'isLocationMandatory': isSwitched,
+      }).then((shopData) async {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .where('targetData.state', isEqualTo: widget.state)
+            .where('targetData.city', isEqualTo: widget.city)
+            .where('targetData.beat', isEqualTo: widget.beat)
+            .get()
+            .then((value) {
+          value.docs.forEach((element) {
+            List shopsToVisit = element.get('targetData.shopsToVisit');
+            shopsToVisit.add({
+              'comment': "Not Visited",
+              'isVisited': false,
+              'orderSuccessful': false,
+              'shopRef': 'shops/${shopData.id}'
+            });
+            FirebaseFirestore.instance
+                .collection('users')
+                .doc(element.id)
+                .update({'targetData.shopsToVisit': shopsToVisit});
+          });
+        });
       });
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Shop added"),
         backgroundColor: Colors.blue,

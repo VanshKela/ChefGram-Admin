@@ -1,12 +1,7 @@
-import 'package:chef_gram_admin/models/profile_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
-import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
-
-import '../../database_service.dart';
-import 'add_shop_to_beat.dart';
 import 'edit_shop.dart';
 
 class DeleteShop extends StatefulWidget {
@@ -90,18 +85,45 @@ class _DeleteShopState extends State<DeleteShop> {
   }
 
   void deleteShop() async {
-    var shopCollection = await FirebaseFirestore.instance
-        .collection('shops')
-        .where('city', isEqualTo: city)
-        .where('state', isEqualTo: state)
-        .where('beat', isEqualTo: beat)
-        .where('shopName', isEqualTo: shop)
-        .get();
+    try {
+      var shopCollection = await FirebaseFirestore.instance
+          .collection('shops')
+          .where('city', isEqualTo: city)
+          .where('state', isEqualTo: state)
+          .where('beat', isEqualTo: beat)
+          .where('shopName', isEqualTo: shop)
+          .get();
 
-    await FirebaseFirestore.instance
-        .collection('shops')
-        .doc(shopCollection.docs.first.id)
-        .delete();
+      await FirebaseFirestore.instance
+          .collection('shops')
+          .doc(shopCollection.docs.first.id)
+          .delete()
+          .then((shopData) async {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .where('targetData.state', isEqualTo: state)
+            .where('targetData.city', isEqualTo: city)
+            .where('targetData.beat', isEqualTo: beat)
+            .get()
+            .then((value) {
+          value.docs.forEach((element) {
+            List shopsToVisit = element.get('targetData.shopsToVisit');
+            shopsToVisit.removeWhere((element) =>
+                element['shopRef'] == shopCollection.docs.first.id);
+            FirebaseFirestore.instance
+                .collection('users')
+                .doc(element.id)
+                .update({'targetData.shopsToVisit': shopsToVisit});
+          });
+        });
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString()),
+        backgroundColor: Colors.red,
+        duration: Duration(milliseconds: 2500),
+      ));
+    }
   }
 
   @override
