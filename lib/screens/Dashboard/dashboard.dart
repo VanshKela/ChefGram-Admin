@@ -30,7 +30,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   List orderData = [];
   bool isDataFetched = false;
-
+  late String appVerison;
   List<Widget> targetDailyWidgetList = [];
   Map<String, dynamic> employeeSalesMap = {};
   void calculateSales() async {

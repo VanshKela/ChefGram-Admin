@@ -1,5 +1,7 @@
 import 'package:chef_gram_admin/screens/Dashboard/dashboard.dart';
+import 'package:chef_gram_admin/screens/Dashboard/update_app.dart';
 import 'package:chef_gram_admin/screens/auth/login.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +12,17 @@ import 'authentication_service.dart';
 import 'database_service.dart';
 import 'models/profile_model.dart';
 
+late String latestVersion;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await FirebaseFirestore.instance
+      .collection('version')
+      .doc("YWkBB45GuoOj3njPG9yp")
+      .get()
+      .then((value) {
+    latestVersion = value.get('adminVersion');
+  });
   Provider.debugCheckInvalidValueType = null;
   runApp(const MyApp());
 }
@@ -70,6 +80,8 @@ class AuthenticationWrapper extends StatelessWidget {
     final firebaseUser = context.watch<User?>();
     if (firebaseUser == null) {
       return LogInPage();
+    } else if (latestVersion != '1.0.0') {
+      return UpdateApp();
     } else {
       return Dashboard();
     }
