@@ -48,7 +48,7 @@ class _AddEmployeeState extends State<AddEmployee> {
       return users.doc(userCredential.user!.uid).set({
         'name': nameController.value.text,
         'role': role,
-        'phoneNo': phoneNoController.text,
+        'phoneNo': double.parse(phoneNoController.text).toInt(),
         'age': int.parse(ageController.value.text),
         'monthlyTarget': 60000,
         'timeTargetUpdated': DateTime.now().subtract(Duration(days: 1)),
@@ -83,7 +83,7 @@ class _AddEmployeeState extends State<AddEmployee> {
       return users.doc(userCredential.user!.uid).set({
         'name': nameController.value.text,
         'role': role,
-        'phoneNo': phoneNoController.text,
+        'phoneNo': double.parse(phoneNoController.text).toInt(),
         'age': double.parse(ageController.value.text).toInt(),
       }).then((value) {
         passwordController.clear();

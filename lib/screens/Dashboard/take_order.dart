@@ -1,22 +1,18 @@
-import 'package:chef_gram_admin/models/profile_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
-import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import '';
+import 'choose_from_catalog.dart';
 
-import '../../database_service.dart';
-import 'add_shop_to_beat.dart';
-import 'edit_shop.dart';
-
-class DeleteShop extends StatefulWidget {
-  const DeleteShop({Key? key}) : super(key: key);
+class TakeOrder extends StatefulWidget {
+  const TakeOrder({Key? key}) : super(key: key);
 
   @override
-  _DeleteShopState createState() => _DeleteShopState();
+  _TakeOrderState createState() => _TakeOrderState();
 }
 
-class _DeleteShopState extends State<DeleteShop> {
+class _TakeOrderState extends State<TakeOrder> {
   static CollectionReference stateCollection =
       FirebaseFirestore.instance.collection('states');
   var state;
@@ -89,21 +85,6 @@ class _DeleteShopState extends State<DeleteShop> {
     });
   }
 
-  void deleteShop() async {
-    var shopCollection = await FirebaseFirestore.instance
-        .collection('shops')
-        .where('city', isEqualTo: city)
-        .where('state', isEqualTo: state)
-        .where('beat', isEqualTo: beat)
-        .where('shopName', isEqualTo: shop)
-        .get();
-
-    await FirebaseFirestore.instance
-        .collection('shops')
-        .doc(shopCollection.docs.first.id)
-        .delete();
-  }
-
   @override
   void initState() {
     getStates();
@@ -115,13 +96,13 @@ class _DeleteShopState extends State<DeleteShop> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Manage Shops"),
           centerTitle: true,
+          title: Text("Choose Beat"),
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 2.h),
               Container(
@@ -278,76 +259,45 @@ class _DeleteShopState extends State<DeleteShop> {
                   ],
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ElevatedButton(
-                    child: Text("Edit Shop"),
-                    onPressed: () async {
-                      if (state != null &&
-                          city != null &&
-                          beat != null &&
-                          shop != null) {
-                        Loader.show(context);
-                        await FirebaseFirestore.instance
-                            .collection('shops')
-                            .where('state', isEqualTo: state)
-                            .where('city', isEqualTo: city)
-                            .where('beat', isEqualTo: beat)
-                            .where('shopName', isEqualTo: shop)
-                            .get()
-                            .then((value) {
-                          Loader.hide();
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditShop(
-                                      data: value.docs.first,
-                                      id: value.docs.first.id)));
-                        });
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Select all fields first!"),
-                          backgroundColor: Colors.red,
-                          duration: Duration(milliseconds: 600),
-                        ));
-                      }
-                    },
-                  ),
-                  ElevatedButton(
-                    child: Text("Delete Shop"),
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(Colors.red.shade400),
-                    ),
-                    onPressed: () {
-                      if (state != null &&
-                          city != null &&
-                          beat != null &&
-                          shop != null) {
-                        deleteShop();
-                        setState(() {
-                          state = null;
-                          city = null;
-                          beat = null;
-                          shop = null;
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Shop deleted"),
-                          backgroundColor: Colors.blue,
-                          duration: Duration(milliseconds: 600),
-                        ));
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Select all fields first!"),
-                          backgroundColor: Colors.red,
-                          duration: Duration(milliseconds: 600),
-                        ));
-                      }
-                    },
-                  ),
-                ],
-              )
+              ElevatedButton(
+                child: Text("Continue"),
+                onPressed: () async {
+                  if (state != null &&
+                      city != null &&
+                      beat != null &&
+                      shop != null) {
+                    Loader.show(context);
+                    await FirebaseFirestore.instance
+                        .collection('shops')
+                        .where('state', isEqualTo: state)
+                        .where('city', isEqualTo: city)
+                        .where('beat', isEqualTo: beat)
+                        .where('shopName', isEqualTo: shop)
+                        .get()
+                        .then((value) async {
+                      Loader.hide();
+                      await FirebaseFirestore.instance
+                          .collection('shops')
+                          .doc(value.docs.first.id)
+                          .get()
+                          .then((value) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ChooseFromCatalog(
+                                      shopDetails: value.data(),
+                                    )));
+                      });
+                    });
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Select all fields first!"),
+                      backgroundColor: Colors.red,
+                      duration: Duration(milliseconds: 600),
+                    ));
+                  }
+                },
+              ),
             ],
           ),
         ),

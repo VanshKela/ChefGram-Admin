@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:chef_gram_admin/models/profile_model.dart';
+import 'package:chef_gram_admin/screens/Dashboard/take_order.dart';
 import 'package:chef_gram_admin/utils/graphs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -138,6 +139,16 @@ class _DashboardState extends State<Dashboard> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => Orders(isFromHome: true)));
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.add),
+                    title: Text('Take Order',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => TakeOrder()));
                     },
                   ),
                   ListTile(
