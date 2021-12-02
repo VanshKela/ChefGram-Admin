@@ -30,7 +30,7 @@ class _OrdersState extends State<Orders> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            if (isDataFetched) {
+            if (isDataFetched && orderData.isNotEmpty) {
               Navigator.push(
                   context,
                   MaterialPageRoute(

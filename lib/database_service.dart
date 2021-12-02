@@ -29,8 +29,10 @@ class DatabaseService {
 
   Future<Map<String, dynamic>> getEmployeeData() async {
     if (employeeData.keys.length == 0) {
-      var docs =
-          await _profileCollection.where('role', isEqualTo: 'employee').get();
+      var docs = await _profileCollection
+          .where('role', isEqualTo: 'employee')
+          .where('isActive', isEqualTo: true)
+          .get();
       for (var document in docs.docs) {
         String key = document.get('name');
         employeeData['$key'] = document.get('monthlyTarget');

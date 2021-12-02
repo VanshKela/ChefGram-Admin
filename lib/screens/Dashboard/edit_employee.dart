@@ -52,6 +52,7 @@ class _EditEmployeeState extends State<EditEmployee> {
       };
       await document.update(targetData).then((value) => Loader.hide());
     } catch (e) {
+      Loader.hide();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(e.toString()),
         backgroundColor: Colors.red,
