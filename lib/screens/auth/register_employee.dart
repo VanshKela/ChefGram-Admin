@@ -52,6 +52,7 @@ class _AddEmployeeState extends State<AddEmployee> {
         'age': int.parse(ageController.value.text),
         'monthlyTarget': 60000,
         'timeTargetUpdated': DateTime.now().subtract(Duration(days: 1)),
+        'isActive': true
       }).then((value) {
         passwordController.clear();
         nameController.clear();
