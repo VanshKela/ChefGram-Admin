@@ -20,7 +20,6 @@ class _EditEmployeeState extends State<EditEmployee> {
   late final nameController;
   late final phoneNoController;
 
-  @override
   void deleteUser() async {
     try {
       await FirebaseFirestore.instance

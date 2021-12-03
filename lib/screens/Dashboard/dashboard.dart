@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:chef_gram_admin/models/profile_model.dart';
-import 'package:chef_gram_admin/screens/Dashboard/take_order.dart';
+import 'package:chef_gram_admin/screens/TakeOrder/take_order.dart';
 import 'package:chef_gram_admin/utils/graphs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,13 +12,13 @@ import 'package:sizer/sizer.dart';
 import '../../authentication_service.dart';
 import '../../database_service.dart';
 import '../../main.dart';
-import 'add_beat.dart';
-import 'add_shops.dart';
-import 'daily_target_list.dart';
-import 'manage_shop.dart';
-import 'employee_list.dart';
-import 'orders.dart';
-import 'catalog.dart';
+import '../Shops/add_beat.dart';
+import '../Shops/add_shops.dart';
+import '../Employee/daily_target_list.dart';
+import '../Shops/manage_shop.dart';
+import '../Employee/employee_list.dart';
+import '../OrderHistory/orders.dart';
+import '../Catalog/catalog.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);

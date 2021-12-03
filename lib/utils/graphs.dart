@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:chef_gram_admin/models/profile_model.dart';
-import 'package:chef_gram_admin/screens/Dashboard/daily_target_list.dart';
+import 'package:chef_gram_admin/screens/Employee/daily_target_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';

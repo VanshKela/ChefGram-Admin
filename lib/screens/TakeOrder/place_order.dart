@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:sizer/sizer.dart';
-import 'dashboard.dart';
+import '../Dashboard/dashboard.dart';
 
 class PlaceOrder extends StatefulWidget {
   final Order order;

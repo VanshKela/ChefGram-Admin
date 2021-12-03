@@ -1,5 +1,5 @@
 import 'package:chef_gram_admin/database_service.dart';
-import 'package:chef_gram_admin/screens/Dashboard/stats_page.dart';
+import 'package:chef_gram_admin/screens/OrderHistory/stats_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

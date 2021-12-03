@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:sizer/sizer.dart';
 
-import 'add_shops.dart';
 
 class AddBeat extends StatefulWidget {
   const AddBeat({Key? key}) : super(key: key);

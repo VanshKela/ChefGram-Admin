@@ -1,29 +1,35 @@
-import 'package:chef_gram_admin/models/profile_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:sizer/sizer.dart';
+import 'choose_from_catalog.dart';
 
-import '../../database_service.dart';
-import 'add_shop_to_beat.dart';
-
-class AddShop extends StatefulWidget {
-  const AddShop({Key? key}) : super(key: key);
+class TakeOrder extends StatefulWidget {
+  const TakeOrder({Key? key}) : super(key: key);
 
   @override
-  _AddShopState createState() => _AddShopState();
+  _TakeOrderState createState() => _TakeOrderState();
 }
 
-class _AddShopState extends State<AddShop> {
+class _TakeOrderState extends State<TakeOrder> {
   static CollectionReference stateCollection =
       FirebaseFirestore.instance.collection('states');
   var state;
   var city;
   var beat;
+  var shop;
 
   List<String> beats = [];
   List<String> stateList = [];
   List<String> cityList = [];
+  List<String> shops = [];
+
+  @override
+  void dispose() {
+    Loader.hide();
+    super.dispose();
+  }
+
   void getStates() async {
     List<String> _stateList = [];
     var statesRef = await stateCollection.get();
@@ -62,6 +68,22 @@ class _AddShopState extends State<AddShop> {
     });
   }
 
+  Future<void> getShop() async {
+    var shopCollection = await FirebaseFirestore.instance
+        .collection('shops')
+        .where('city', isEqualTo: city)
+        .where('state', isEqualTo: state)
+        .where('beat', isEqualTo: beat)
+        .get();
+    List<String> _shops = [];
+    shopCollection.docs.forEach((shop) {
+      _shops.add(shop['shopName']);
+    });
+    setState(() {
+      shops = _shops;
+    });
+  }
+
   @override
   void initState() {
     getStates();
@@ -73,13 +95,13 @@ class _AddShopState extends State<AddShop> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Add Shops"),
           centerTitle: true,
+          title: Text("Choose Shop"),
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 2.h),
               Container(
@@ -110,8 +132,10 @@ class _AddShopState extends State<AddShop> {
                                 state = newval;
                                 city = null;
                                 beat = null;
+                                shop = null;
                                 cityList.clear();
                                 beats.clear();
+                                shops.clear();
                               });
                               getCities();
                             },
@@ -145,6 +169,8 @@ class _AddShopState extends State<AddShop> {
                               setState(() {
                                 city = newval;
                                 beat = null;
+                                shop = null;
+                                shops.clear();
                               });
                               getBeat();
                             },
@@ -177,9 +203,45 @@ class _AddShopState extends State<AddShop> {
                             onChanged: (String? newval) {
                               setState(() {
                                 beat = newval;
+                                shop = null;
                               });
+                              getShop();
                             },
                             items: beats
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 4.h,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4.w),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Select Shop:",
+                            style: TextStyle(
+                                fontSize: 12.sp, fontWeight: FontWeight.bold),
+                          ),
+                          DropdownButton<String>(
+                            value: shop,
+                            icon: Icon(Icons.keyboard_arrow_down),
+                            iconSize: 28,
+                            elevation: 20,
+                            onChanged: (String? newval) {
+                              setState(() {
+                                shop = newval;
+                              });
+                            },
+                            items: shops
                                 .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
@@ -196,29 +258,48 @@ class _AddShopState extends State<AddShop> {
                   ],
                 ),
               ),
-              Center(
-                child: ElevatedButton(
-                  child: Text("Continue"),
-                  onPressed: () {
-                    if ((state != null) && (city != null) && (beat != null)) {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddShopToBeat(
-                                    state: state,
-                                    city: city,
-                                    beat: beat,
-                                  )));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("Select all Fields!"),
-                        backgroundColor: Colors.red,
-                        duration: Duration(milliseconds: 1600),
-                      ));
-                    }
-                  },
-                ),
-              )
+              ElevatedButton(
+                child: Text("Continue"),
+                onPressed: () async {
+                  if (state != null &&
+                      city != null &&
+                      beat != null &&
+                      shop != null) {
+                    Loader.show(context);
+                    await FirebaseFirestore.instance
+                        .collection('shops')
+                        .where('state', isEqualTo: state)
+                        .where('city', isEqualTo: city)
+                        .where('beat', isEqualTo: beat)
+                        .where('shopName', isEqualTo: shop)
+                        .get()
+                        .then((value) async {
+                      Loader.hide();
+                      await FirebaseFirestore.instance
+                          .collection('shops')
+                          .doc(value.docs.first.id)
+                          .get()
+                          .then((value) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ChooseFromCatalog(
+                                      shopDetails: {
+                                        ...?value.data(),
+                                        'shopId': value.id
+                                      },
+                                    )));
+                      });
+                    });
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("Select all fields first!"),
+                      backgroundColor: Colors.red,
+                      duration: Duration(milliseconds: 600),
+                    ));
+                  }
+                },
+              ),
             ],
           ),
         ),

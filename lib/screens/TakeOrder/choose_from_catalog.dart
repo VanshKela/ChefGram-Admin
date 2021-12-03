@@ -1,6 +1,6 @@
 import 'package:chef_gram_admin/models/orderModel.dart';
 import 'package:chef_gram_admin/models/profile_model.dart';
-import 'package:chef_gram_admin/screens/Dashboard/place_order.dart';
+import 'package:chef_gram_admin/screens/TakeOrder/place_order.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
