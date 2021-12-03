@@ -18,6 +18,7 @@ class _DeleteShopState extends State<DeleteShop> {
   var city;
   var beat;
   var shop;
+  String shopId = '';
 
   List<String> beats = [];
   List<String> stateList = [];
@@ -81,6 +82,19 @@ class _DeleteShopState extends State<DeleteShop> {
     });
     setState(() {
       shops = _shops;
+    });
+  }
+
+  void getShopId() async {
+    var shopCollection = await FirebaseFirestore.instance
+        .collection('shops')
+        .where('city', isEqualTo: city)
+        .where('state', isEqualTo: state)
+        .where('beat', isEqualTo: beat)
+        .where('shopName', isEqualTo: shop)
+        .get();
+    setState(() {
+      shopId = shopCollection.docs.first.id;
     });
   }
 
@@ -175,6 +189,7 @@ class _DeleteShopState extends State<DeleteShop> {
                                 city = null;
                                 beat = null;
                                 shop = null;
+                                shopId = '';
                                 cityList.clear();
                                 beats.clear();
                                 shops.clear();
@@ -212,6 +227,7 @@ class _DeleteShopState extends State<DeleteShop> {
                                 city = newval;
                                 beat = null;
                                 shop = null;
+                                shopId = '';
                                 shops.clear();
                               });
                               getBeat();
@@ -246,6 +262,7 @@ class _DeleteShopState extends State<DeleteShop> {
                               setState(() {
                                 beat = newval;
                                 shop = null;
+                                shopId = '';
                               });
                               getShop();
                             },
@@ -282,6 +299,7 @@ class _DeleteShopState extends State<DeleteShop> {
                               setState(() {
                                 shop = newval;
                               });
+                              getShopId();
                             },
                             items: shops
                                 .map<DropdownMenuItem<String>>((String value) {
@@ -298,6 +316,16 @@ class _DeleteShopState extends State<DeleteShop> {
                       height: 4.h,
                     ),
                   ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 1.h),
+                child: Center(
+                  child: Text(
+                    'Shop ID: $shopId',
+                    style:
+                        TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
               Row(
