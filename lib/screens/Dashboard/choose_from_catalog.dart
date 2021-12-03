@@ -28,7 +28,8 @@ class _ChooseFromCatalogState extends State<ChooseFromCatalog> {
         state: widget.shopDetails["state"],
         city: widget.shopDetails["city"],
         beat: widget.shopDetails["beat"],
-        address: widget.shopDetails['address']);
+        address: widget.shopDetails['address'],
+        shopId: widget.shopDetails['shopId'].toString());
     super.initState();
   }
 

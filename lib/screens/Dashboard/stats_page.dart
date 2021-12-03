@@ -33,24 +33,27 @@ class _StatsPageState extends State<StatsPage> {
     return graphs;
   }
 
-  void getExcel() async{
+  void getExcel() async {
     final xlsio.Workbook workbook = new xlsio.Workbook();
     xlsio.Worksheet sheet = workbook.worksheets[0];
-    sheet.getRangeByIndex(1, 1).setText('Shop Name');
-    sheet.getRangeByIndex(1, 2).setText('Customer Name');
-    sheet.getRangeByIndex(1, 3).setText('State');
-    sheet.getRangeByIndex(1, 4).setText('City');
-    sheet.getRangeByIndex(1, 5).setText('Beat');
-    sheet.getRangeByIndex(1, 6).setText('Address');
-    sheet.getRangeByIndex(1, 7).setText('Order Taken By');
-    sheet.getRangeByIndex(1, 8).setText('Date Time');
-    sheet.getRangeByIndex(1, 9).setText('Item');
-    sheet.getRangeByIndex(1, 10).setText('Quantity (gm)');
-    sheet.getRangeByIndex(1, 11).setText('Boxes');
-    sheet.getRangeByIndex(1, 12).setText('Price');
-    sheet.getRangeByIndex(1, 13).setText('Total');
+    sheet.getRangeByIndex(1, 1).setText('Unique ID');
+    sheet.getRangeByIndex(1, 2).setText('Shop Name');
+    sheet.getRangeByIndex(1, 3).setText('Customer Name');
+    sheet.getRangeByIndex(1, 4).setText('State');
+    sheet.getRangeByIndex(1, 5).setText('City');
+    sheet.getRangeByIndex(1, 6).setText('Beat');
+    sheet.getRangeByIndex(1, 7).setText('Address');
+    sheet.getRangeByIndex(1, 8).setText('Order Taken By');
+    sheet.getRangeByIndex(1, 9).setText('Date Time');
+    sheet.getRangeByIndex(1, 10).setText('Item');
+    sheet.getRangeByIndex(1, 11).setText('Quantity (gm)');
+    sheet.getRangeByIndex(1, 12).setText('Boxes');
+    sheet.getRangeByIndex(1, 13).setText('Price');
+    sheet.getRangeByIndex(1, 14).setText('Total');
+
     int row = 2;
     widget.orderData.forEach((order) {
+      String shopId = order.get('shopId');
       String shopName = order.get('shopName');
       String customerName = order.get('customerName');
       String state = order.get('state');
@@ -60,20 +63,25 @@ class _StatsPageState extends State<StatsPage> {
       String orderTakenBy = order.get('orderTakenBy');
       DateTime dateTime = order.get('dateTime').toDate();
       List items = order.get('items');
-      for (int i=0; i<items.length;i++) {
-        sheet.getRangeByIndex(row, 1).setText(shopName);
-        sheet.getRangeByIndex(row, 2).setText(customerName);
-        sheet.getRangeByIndex(row, 3).setText(state);
-        sheet.getRangeByIndex(row, 4).setText(city);
-        sheet.getRangeByIndex(row, 5).setText(beat);
-        sheet.getRangeByIndex(row, 6).setText(address);
-        sheet.getRangeByIndex(row, 7).setText(orderTakenBy);
-        sheet.getRangeByIndex(row, 8).setDateTime(dateTime);
-        sheet.getRangeByIndex(row, 9).setText(items[i]['name']);
-        sheet.getRangeByIndex(row, 10).setText((items[i]['quantity']).toString());
-        sheet.getRangeByIndex(row, 11).setText((items[i]['boxes']).toString());
-        sheet.getRangeByIndex(row, 12).setText((items[i]['price']).toString());
-        sheet.getRangeByIndex(row, 13).setText((items[i]['boxes'] * items[i]['price']).toString());
+      for (int i = 0; i < items.length; i++) {
+        sheet.getRangeByIndex(row, 1).setText(shopId);
+        sheet.getRangeByIndex(row, 2).setText(shopName);
+        sheet.getRangeByIndex(row, 3).setText(customerName);
+        sheet.getRangeByIndex(row, 4).setText(state);
+        sheet.getRangeByIndex(row, 5).setText(city);
+        sheet.getRangeByIndex(row, 6).setText(beat);
+        sheet.getRangeByIndex(row, 7).setText(address);
+        sheet.getRangeByIndex(row, 8).setText(orderTakenBy);
+        sheet.getRangeByIndex(row, 9).setDateTime(dateTime);
+        sheet.getRangeByIndex(row, 10).setText(items[i]['name']);
+        sheet
+            .getRangeByIndex(row, 11)
+            .setText((items[i]['quantity']).toString());
+        sheet.getRangeByIndex(row, 12).setText((items[i]['boxes']).toString());
+        sheet.getRangeByIndex(row, 13).setText((items[i]['price']).toString());
+        sheet
+            .getRangeByIndex(row, 14)
+            .setText((items[i]['boxes'] * items[i]['price']).toString());
         row++;
       }
     });

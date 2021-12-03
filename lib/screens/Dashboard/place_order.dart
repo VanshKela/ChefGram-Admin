@@ -36,6 +36,7 @@ class _PlaceOrderState extends State<PlaceOrder> {
       'state': widget.order.state,
       'city': widget.order.city,
       'beat': widget.order.beat,
+      'shopId': widget.order.shopId
     };
     return orders.add(orderData).then((value) async {
       final snackBar = SnackBar(

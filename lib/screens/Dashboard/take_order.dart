@@ -97,7 +97,7 @@ class _TakeOrderState extends State<TakeOrder> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text("Choose Beat"),
+          title: Text("Choose Shop"),
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
@@ -285,7 +285,10 @@ class _TakeOrderState extends State<TakeOrder> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ChooseFromCatalog(
-                                      shopDetails: value.data(),
+                                      shopDetails: {
+                                        ...?value.data(),
+                                        'shopId': value.id
+                                      },
                                     )));
                       });
                     });

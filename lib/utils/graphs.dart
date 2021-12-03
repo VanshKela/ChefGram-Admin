@@ -12,7 +12,7 @@ class _ChartData {
   _ChartData(this.x, this.y);
 
   final String x;
-  final int y;
+  final double y;
 }
 
 Widget DayBasedLineGraph(List orderData, BuildContext context) {
@@ -25,16 +25,16 @@ Widget DayBasedLineGraph(List orderData, BuildContext context) {
       .difference(startDate)
       .inDays;
 
-  Map<String, int> orderMap = {};
+  Map<String, double> orderMap = {};
   for (int i = 0; i <= dayDiff; i++) {
     DateTime newDay = startDate.add(Duration(days: i));
     String key = "${newDay.day}-${newDay.month}";
-    orderMap['$key'] = 0;
+    orderMap['$key'] = 0.0;
   }
   orderData.forEach((order) {
     DateTime dateTime = order['dateTime'].toDate();
     String key = "${dateTime.day}-${dateTime.month}";
-    orderMap['$key'] = (orderMap['$key']! + order['total']) as int;
+    orderMap['$key'] = (orderMap['$key']! + order['total']);
   });
   orderMap.forEach((key, value) {
     chartData.add(_ChartData(key, value));
@@ -71,12 +71,11 @@ Widget DayBasedLineGraph(List orderData, BuildContext context) {
 Widget StatePieChart(List orderData) {
   var totalSale = 0.0;
   List<_ChartData> chartData = [];
-  Map<String, int> orderMap = {};
+  Map<String, double> orderMap = {};
   orderData.forEach((order) {
     totalSale += order['total'];
     if (orderMap.containsKey(order['state']))
-      orderMap[order['state']] =
-          (orderMap[order['state']]! + order['total']) as int;
+      orderMap[order['state']] = (orderMap[order['state']]! + order['total']);
     else
       orderMap[order['state']] = order['total'];
   });
@@ -112,13 +111,13 @@ Widget StatePieChart(List orderData) {
 
 Widget EmployeeBarGraph(List orderData, BuildContext context) {
   List<_ChartData> data = [];
-  Map<String, int> orderMap = {};
+  Map<String, double> orderMap = {};
   orderData.forEach((order) {
     if (orderMap.containsKey(order['orderTakenBy']))
       orderMap[order['orderTakenBy']] =
-          (orderMap[order['orderTakenBy']]! + order['total']) as int;
+          (orderMap[order['orderTakenBy']]! + order['total']);
     else
-      orderMap[order['orderTakenBy']] = order['total'];
+      orderMap[order['orderTakenBy']] = double.parse(order['total'].toString());
   });
   orderMap.forEach((key, value) {
     data.add(_ChartData(key, value));
@@ -140,7 +139,7 @@ Widget EmployeeBarGraph(List orderData, BuildContext context) {
                     primaryXAxis: CategoryAxis(),
                     primaryYAxis: NumericAxis(
                         minimum: 0,
-                        maximum: orderMap.values.reduce(max).toDouble(),
+                        maximum: orderMap.values.reduce(max),
                         interval: 1000),
                     tooltipBehavior: _tooltip,
                     series: <ChartSeries<_ChartData, String>>[
@@ -164,12 +163,11 @@ Widget EmployeeBarGraph(List orderData, BuildContext context) {
 Widget CityPieChart(List orderData) {
   var totalSale = 0.0;
   List<_ChartData> chartData = [];
-  Map<String, int> orderMap = {};
+  Map<String, double> orderMap = {};
   orderData.forEach((order) {
     totalSale += order['total'];
     if (orderMap.containsKey(order['city']))
-      orderMap[order['city']] =
-          (orderMap[order['city']]! + order['total']) as int;
+      orderMap[order['city']] = (orderMap[order['city']]! + order['total']);
     else
       orderMap[order['city']] = order['total'];
   });
@@ -206,11 +204,10 @@ Widget CityPieChart(List orderData) {
 
 Widget BeatBarGraph(List orderData) {
   List<_ChartData> data = [];
-  Map<String, int> orderMap = {};
+  Map<String, double> orderMap = {};
   orderData.forEach((order) {
     if (orderMap.containsKey(order['beat']))
-      orderMap[order['beat']] =
-          (orderMap[order['beat']]! + order['total']) as int;
+      orderMap[order['beat']] = (orderMap[order['beat']]! + order['total']);
     else
       orderMap[order['beat']] = order['total'];
   });
@@ -260,19 +257,19 @@ Widget DailyLineGraph(List orderData, BuildContext context) {
   DateTime startDate =
       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
   int hourDiff = DateTime.now().difference(startDate).inHours;
-  Map<String, int> orderMap = {};
+  Map<String, double> orderMap = {};
   for (int i = 0; i <= hourDiff; i++) {
     DateTime newDay = startDate.add(Duration(hours: i));
 
     String key = "${newDay.hour}:00";
-    orderMap['$key'] = 0;
+    orderMap['$key'] = 0.0;
   }
 
   orderData.forEach((order) {
     DateTime dateTime = order['dateTime'].toDate();
     String key = "${dateTime.hour}:00";
 
-    orderMap['$key'] = (orderMap['$key']! + order['total']) as int;
+    orderMap['$key'] = (orderMap['$key']! + order['total']);
   });
   orderMap.forEach((key, value) {
     chartData.add(_ChartData(key, value));
@@ -306,7 +303,7 @@ Widget DailyLineGraph(List orderData, BuildContext context) {
   );
 }
 
-Widget EmployeeRadialGraph(int sales, int target) {
+Widget EmployeeRadialGraph(double sales, int target) {
   target = target ~/ 30;
   final List<_RadialChartData> chartData = <_RadialChartData>[
     _RadialChartData(
@@ -348,11 +345,11 @@ class _RadialChartData {
 
 Widget ECOBarGraph(List orderData) {
   List<_ChartData> data = [];
-  Map<String, int> orderMap = {};
+  Map<String, double> orderMap = {};
   orderData.forEach((order) {
     String key = "${order['shopName']}, ${order['beat']}, ${order['city']}";
     if (orderMap.containsKey(key))
-      orderMap[key] = (orderMap[key]! + order['total']) as int;
+      orderMap[key] = (orderMap[key]! + order['total']);
     else
       orderMap[key] = order['total'];
   });
@@ -386,10 +383,6 @@ Widget ECOBarGraph(List orderData) {
                   width: data.length < 8 ? 100.w : 100.0 * data.length,
                   height: 50.h,
                   child: SfCartesianChart(
-                      // title: ChartTitle(
-                      //     text: "          ECO : ${data.length}",
-                      //     alignment: ChartAlignment.near,
-                      //     textStyle: TextStyle(fontWeight: FontWeight.bold)),
                       primaryXAxis: CategoryAxis(
                         labelIntersectAction: AxisLabelIntersectAction.wrap,
                       ),

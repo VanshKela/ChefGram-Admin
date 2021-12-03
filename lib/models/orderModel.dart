@@ -13,7 +13,8 @@ class Order {
       required this.city,
       required this.beat,
       required this.shopRef,
-      required this.address});
+      required this.address,
+      required this.shopId});
 
   List<OrderItem> order = [];
   DateTime timeStamp = DateTime.now();
@@ -26,6 +27,7 @@ class Order {
   String state = 'unknown';
   String city = 'unknown';
   String beat = 'unknown';
+  String shopId = 'unknown';
   Function? addToOrder(OrderItem item) {
     this.order.add(item);
   }

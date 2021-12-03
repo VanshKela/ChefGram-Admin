@@ -40,7 +40,7 @@ class _DashboardState extends State<Dashboard> {
         await Provider.of<DatabaseService>(context, listen: false)
             .getEmployeeData();
     for (String key in employeeData.keys) {
-      _employeeSalesMap[key] = 0;
+      _employeeSalesMap[key] = 0.0;
     }
 
     for (var order in orderData) {
