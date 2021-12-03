@@ -27,8 +27,8 @@ class _EditShopState extends State<EditShop> {
         'city': widget.data['city'],
         'email': emailController.text.isEmpty ? 'none' : emailController.text,
         'phoneNo': phoneNoController.text.isEmpty
-            ? '0'
-            : (double.parse(phoneNoController.text).toInt()).toString(),
+            ? 0
+            : double.parse(phoneNoController.text).toInt(),
         'shopName': shopNameController.text,
         'shopOwner': shopOwnerController.text,
         'latitude': double.parse(latitudeController.text),

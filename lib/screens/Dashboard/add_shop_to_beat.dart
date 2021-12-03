@@ -29,8 +29,8 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
         'city': widget.city,
         'email': emailController.text.isEmpty ? 'none' : emailController.text,
         'phoneNo': phoneNoController.text.isEmpty
-            ? '0'
-            : (double.parse(phoneNoController.text).toInt()).toString(),
+            ? 0
+            : double.parse(phoneNoController.text).toInt(),
         'shopName': shopNameController.text,
         'shopOwner': shopOwnerController.text,
         'latitude': double.parse(latitudeController.text),
@@ -168,7 +168,7 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
                         height: 2.h,
                       ),
                       TextFormField(
-                        controller: shopNameController,
+                        controller: shopOwnerController,
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Required';
@@ -184,7 +184,7 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
                         height: 2.h,
                       ),
                       TextFormField(
-                        controller: shopOwnerController,
+                        controller: shopNameController,
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Required';
