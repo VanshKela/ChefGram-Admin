@@ -50,7 +50,7 @@ class _AddToCatalogState extends State<AddToCatalog> {
       return catalog.doc(fileName).set({
         'name': nameController.value.text,
         'quantity': double.parse(quantityController.value.text).toInt(),
-        'price': double.parse(priceController.value.text).toInt(),
+        'price': double.parse(priceController.value.text),
         'image': imageLink
       }).then((value) {
         priceController.clear();

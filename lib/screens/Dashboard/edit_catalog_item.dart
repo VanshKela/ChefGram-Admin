@@ -6,10 +6,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import '../../constants.dart';
-import '../../database_service.dart';
 
 class EditCatalogItem extends StatefulWidget {
   const EditCatalogItem({Key? key, required this.data}) : super(key: key);
@@ -52,7 +50,7 @@ class _EditCatalogItemState extends State<EditCatalogItem> {
       return catalog.doc(widget.data['id'].toString()).update({
         'name': nameController.value.text,
         'quantity': double.parse(quantityController.value.text).toInt(),
-        'price': double.parse(priceController.value.text).toInt(),
+        'price': double.parse(priceController.value.text),
         'image': imageLink
       }).then((value) {
         priceController.clear();
@@ -64,7 +62,7 @@ class _EditCatalogItemState extends State<EditCatalogItem> {
       return catalog.doc(widget.data['id'].toString()).update({
         'name': nameController.value.text,
         'quantity': int.parse(quantityController.value.text),
-        'price': int.parse(priceController.value.text),
+        'price': double.parse(priceController.value.text),
       }).then((value) {
         priceController.clear();
         nameController.clear();

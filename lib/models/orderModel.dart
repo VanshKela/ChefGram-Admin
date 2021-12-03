@@ -17,7 +17,7 @@ class Order {
 
   List<OrderItem> order = [];
   DateTime timeStamp = DateTime.now();
-  int total = 0;
+  double total = 0;
   String orderTakenBy = "USER";
   String customerName = "Customer";
   String shopName = 'unknown';
@@ -31,7 +31,7 @@ class Order {
   }
 
   Function? viewOrder() {
-    int totalMoney = 0;
+    double totalMoney = 0;
     this.order.removeWhere((element) => element.itemsOrdered == 0);
     this.order.forEach(
       (element) {
@@ -44,7 +44,7 @@ class Order {
 
 class OrderItem {
   String name;
-  int price;
+  double price;
   int quantity;
   int itemsOrdered;
 

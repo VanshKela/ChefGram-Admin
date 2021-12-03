@@ -77,9 +77,10 @@ class _ChooseFromCatalogState extends State<ChooseFromCatalog> {
                           itemCount: snapshot.data.length,
                           itemBuilder: (BuildContext context, int index) {
                             var document = snapshot.data[index];
+
                             OrderItem item = OrderItem(
                               name: document['name'],
-                              price: document['price'],
+                              price: double.parse(document['price'].toString()),
                               itemsOrdered: 0,
                               quantity: document['quantity'],
                             );
