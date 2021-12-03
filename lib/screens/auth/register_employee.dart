@@ -34,9 +34,10 @@ class _AddEmployeeState extends State<AddEmployee> {
               email: "${phoneNoController.text.trim()}@spice.com",
               password: passwordController.value.text);
     } on FirebaseAuthException catch (e) {
+      Loader.hide();
       final snackBar = SnackBar(
-        backgroundColor: Colors.lightBlue,
-        duration: Duration(seconds: 8),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 3),
         content: Text(
           e.message.toString(),
           style: TextStyle(color: Colors.white),
@@ -48,7 +49,7 @@ class _AddEmployeeState extends State<AddEmployee> {
       return users.doc(userCredential.user!.uid).set({
         'name': nameController.value.text,
         'role': role,
-        'phoneNo': phoneNoController.text,
+        'phoneNo': double.parse(phoneNoController.text).toInt(),
         'age': int.parse(ageController.value.text),
         'monthlyTarget': 60000,
         'timeTargetUpdated': DateTime.now().subtract(Duration(days: 1)),
@@ -70,9 +71,10 @@ class _AddEmployeeState extends State<AddEmployee> {
         Provider.of<DatabaseService>(context, listen: false).getEmployeeData();
         Loader.hide();
       }).catchError((error) {
+        Loader.hide();
         final snackBar = SnackBar(
-          backgroundColor: Colors.lightBlue,
-          duration: Duration(seconds: 8),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
           content: Text(
             error,
             style: TextStyle(color: Colors.white),
@@ -84,7 +86,7 @@ class _AddEmployeeState extends State<AddEmployee> {
       return users.doc(userCredential.user!.uid).set({
         'name': nameController.value.text,
         'role': role,
-        'phoneNo': phoneNoController.text,
+        'phoneNo': double.parse(phoneNoController.text).toInt(),
         'age': double.parse(ageController.value.text).toInt(),
       }).then((value) {
         passwordController.clear();
@@ -93,7 +95,7 @@ class _AddEmployeeState extends State<AddEmployee> {
         phoneNoController.clear();
         final snackBar = SnackBar(
           backgroundColor: Colors.lightBlue,
-          duration: Duration(seconds: 8),
+          duration: Duration(seconds: 3),
           content: Text(
             "Success! New User Created!",
             style: TextStyle(color: Colors.white),
@@ -102,9 +104,10 @@ class _AddEmployeeState extends State<AddEmployee> {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         Loader.hide();
       }).catchError((error) {
+        Loader.hide();
         final snackBar = SnackBar(
-          backgroundColor: Colors.lightBlue,
-          duration: Duration(seconds: 8),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
           content: Text(
             error,
             style: TextStyle(color: Colors.white),

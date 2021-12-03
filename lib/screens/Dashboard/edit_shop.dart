@@ -4,29 +4,27 @@ import 'package:sizer/sizer.dart';
 
 import '../../constants.dart';
 
-class AddShopToBeat extends StatefulWidget {
-  const AddShopToBeat({
+class EditShop extends StatefulWidget {
+  const EditShop({
     Key? key,
-    required this.state,
-    required this.city,
-    required this.beat,
+    required this.data,
+    required this.id,
   }) : super(key: key);
-  final String state;
-  final String city;
-  final String beat;
+  final data;
+  final String id;
 
   @override
-  _AddShopToBeatState createState() => _AddShopToBeatState();
+  _EditShopState createState() => _EditShopState();
 }
 
-class _AddShopToBeatState extends State<AddShopToBeat> {
-  void addShopToBeat() async {
+class _EditShopState extends State<EditShop> {
+  void editShop() async {
     try {
-      await FirebaseFirestore.instance.collection('shops').add({
+      FirebaseFirestore.instance.collection('shops').doc(widget.id).update({
         'address': addressController.text,
-        'beat': widget.beat,
-        'state': widget.state,
-        'city': widget.city,
+        'beat': widget.data['beat'],
+        'state': widget.data['state'],
+        'city': widget.data['city'],
         'email': emailController.text.isEmpty ? 'none' : emailController.text,
         'phoneNo': phoneNoController.text.isEmpty
             ? 0
@@ -35,33 +33,10 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
         'shopOwner': shopOwnerController.text,
         'latitude': double.parse(latitudeController.text),
         'longitude': double.parse(longitudeController.text),
-        'isLocationMandatory': isSwitched,
-      }).then((shopData) async {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .where('targetData.state', isEqualTo: widget.state)
-            .where('targetData.city', isEqualTo: widget.city)
-            .where('targetData.beat', isEqualTo: widget.beat)
-            .get()
-            .then((value) {
-          value.docs.forEach((element) {
-            List shopsToVisit = element.get('targetData.shopsToVisit');
-            shopsToVisit.add({
-              'comment': "Not Visited",
-              'isVisited': false,
-              'orderSuccessful': false,
-              'shopRef': 'shops/${shopData.id}'
-            });
-            FirebaseFirestore.instance
-                .collection('users')
-                .doc(element.id)
-                .update({'targetData.shopsToVisit': shopsToVisit});
-          });
-        });
+        'isLocationMandatory': isSwitched
       });
-
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Shop added"),
+        content: Text("Shop data updated"),
         backgroundColor: Colors.blue,
         duration: Duration(milliseconds: 2500),
       ));
@@ -72,22 +47,33 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
         duration: Duration(milliseconds: 2500),
       ));
     }
-    addressController.clear();
-    phoneNoController.clear();
-    shopOwnerController.clear();
-    shopNameController.clear();
-    emailController.clear();
-    latitudeController.clear();
-    longitudeController.clear();
+
+    Navigator.pop(context);
   }
 
-  final addressController = TextEditingController();
-  final shopNameController = TextEditingController();
-  final shopOwnerController = TextEditingController();
-  final phoneNoController = TextEditingController();
-  final emailController = TextEditingController();
-  final latitudeController = TextEditingController();
-  final longitudeController = TextEditingController();
+  late final addressController;
+  late final shopNameController;
+  late final shopOwnerController;
+  late final phoneNoController;
+  late final emailController;
+  late final latitudeController;
+  late final longitudeController;
+
+  @override
+  void initState() {
+    isSwitched = widget.data['isLocationMandatory'];
+    shopNameController = TextEditingController(text: widget.data['shopName']);
+    shopOwnerController = TextEditingController(text: widget.data['shopOwner']);
+    addressController = TextEditingController(text: widget.data['address']);
+    phoneNoController =
+        TextEditingController(text: widget.data['phoneNo'].toString());
+    emailController = TextEditingController(text: widget.data['email']);
+    latitudeController =
+        TextEditingController(text: widget.data['latitude'].toString());
+    longitudeController =
+        TextEditingController(text: widget.data['longitude'].toString());
+    super.initState();
+  }
 
   void dispose() {
     addressController.dispose();
@@ -101,9 +87,8 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
     super.dispose();
   }
 
-  bool isSwitched = true;
   var textValue = 'Location is now Mandatory!';
-
+  late bool isSwitched;
   void toggleSwitch(bool value) {
     if (isSwitched == true) {
       setState(() {
@@ -124,7 +109,7 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Shops"),
+        title: Text("Edit Shop"),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -146,7 +131,7 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
                       TextFormField(
                         enabled: false,
                         decoration: authTextFieldDecoration.copyWith(
-                            labelText: widget.state),
+                            labelText: widget.data['state']),
                       ),
                       SizedBox(
                         height: 2.h,
@@ -154,7 +139,7 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
                       TextFormField(
                         enabled: false,
                         decoration: authTextFieldDecoration.copyWith(
-                            labelText: widget.city),
+                            labelText: widget.data['city']),
                       ),
                       SizedBox(
                         height: 2.h,
@@ -162,7 +147,7 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
                       TextFormField(
                         enabled: false,
                         decoration: authTextFieldDecoration.copyWith(
-                            labelText: widget.beat),
+                            labelText: widget.data['beat']),
                       ),
                       SizedBox(
                         height: 2.h,
@@ -286,12 +271,11 @@ class _AddShopToBeatState extends State<AddShopToBeat> {
                 ),
               ),
               ElevatedButton(
-                child: Text("Add Shop"),
+                child: Text("Edit Shop"),
                 onPressed: () {
                   if (formGlobalKey.currentState!.validate()) {
                     formGlobalKey.currentState!.save();
-
-                    addShopToBeat();
+                    editShop();
                   }
                 },
               )

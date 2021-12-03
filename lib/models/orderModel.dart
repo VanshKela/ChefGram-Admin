@@ -9,6 +9,9 @@ class Order {
       {required this.orderTakenBy,
       required this.shopName,
       required this.customerName,
+      required this.state,
+      required this.city,
+      required this.beat,
       required this.shopRef,
       required this.address});
 
@@ -20,6 +23,9 @@ class Order {
   String shopName = 'unknown';
   String address = 'unknown';
   String shopRef = 'unknown';
+  String state = 'unknown';
+  String city = 'unknown';
+  String beat = 'unknown';
   Function? addToOrder(OrderItem item) {
     this.order.add(item);
   }

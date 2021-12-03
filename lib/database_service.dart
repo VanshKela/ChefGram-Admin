@@ -19,18 +19,20 @@ class DatabaseService {
 
   Profile _profileFromSnapshot(DocumentSnapshot snapshot) {
     return Profile(
-      name: snapshot.get('name') ?? '',
-      age: snapshot.get('age') ?? 0,
-      role: snapshot.get('role') ?? '',
-      phoneNo: snapshot.get('phoneNo') ?? '0'
-    );
+        name: snapshot.get('name') ?? '',
+        age: snapshot.get('age') ?? 0,
+        role: snapshot.get('role') ?? '',
+        phoneNo: snapshot.get('phoneNo') ?? 0);
   }
 
   Map<String, dynamic> employeeData = {};
 
-  Future<Map<String, dynamic>> getEmployeeData() async{
+  Future<Map<String, dynamic>> getEmployeeData() async {
     if (employeeData.keys.length == 0) {
-      var docs = await _profileCollection.where('role', isEqualTo: 'employee').get();
+      var docs = await _profileCollection
+          .where('role', isEqualTo: 'employee')
+          .where('isActive', isEqualTo: true)
+          .get();
       for (var document in docs.docs) {
         String key = document.get('name');
         employeeData['$key'] = document.get('monthlyTarget');
@@ -102,22 +104,21 @@ class Filters extends ChangeNotifier {
     this.stream = FirebaseFirestore.instance
         .collection('orders')
         .where('dateTime',
-        isGreaterThan: DateTime(DateTime.now().year, DateTime.now().month,
-            DateTime.now().day)
-            .subtract(Duration(days: 6)),
-        isLessThanOrEqualTo: DateTime.now())
+            isGreaterThan: DateTime(DateTime.now().year, DateTime.now().month,
+                    DateTime.now().day)
+                .subtract(Duration(days: 6)),
+            isLessThanOrEqualTo: DateTime.now())
         .orderBy('dateTime', descending: true)
         .snapshots();
   }
 
-  void updateDates (startDate, endDate){
+  void updateDates(startDate, endDate) {
     this.startDate = startDate;
     this.endDate = endDate;
     this.stream = FirebaseFirestore.instance
         .collection('orders')
         .where('dateTime',
-        isGreaterThan: startDate,
-        isLessThanOrEqualTo: endDate)
+            isGreaterThan: startDate, isLessThanOrEqualTo: endDate)
         .orderBy('dateTime', descending: true)
         .snapshots();
   }

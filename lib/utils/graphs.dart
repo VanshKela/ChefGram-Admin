@@ -350,11 +350,9 @@ Widget ECOBarGraph(List orderData) {
   List<_ChartData> data = [];
   Map<String, int> orderMap = {};
   orderData.forEach((order) {
-    print(order.id);
     String key = "${order['shopName']}, ${order['beat']}, ${order['city']}";
     if (orderMap.containsKey(key))
-      orderMap[key] =
-      (orderMap[key]! + order['total']) as int;
+      orderMap[key] = (orderMap[key]! + order['total']) as int;
     else
       orderMap[key] = order['total'];
   });
@@ -373,25 +371,44 @@ Widget ECOBarGraph(List orderData) {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Container(
-                width: data.length < 8 ? 100.w : 100.0 * data.length,
-                child: SfCartesianChart(
-                    primaryXAxis: CategoryAxis(),
-                    primaryYAxis: NumericAxis(
-                        minimum: 0,
-                        maximum: orderMap.values.reduce(max).toDouble(),
-                        interval: 1000),
-                    tooltipBehavior: _tooltip,
-                    series: <ChartSeries<_ChartData, String>>[
-                      ColumnSeries<_ChartData, String>(
-                          dataSource: data,
-                          xValueMapper: (_ChartData data, _) =>
-                          data.x.length < 10
-                              ? data.x
-                              : data.x.substring(0, 10),
-                          yValueMapper: (_ChartData data, _) => data.y,
-                          name: 'Gold',
-                          color: Color.fromRGBO(8, 142, 255, 1))
-                    ])),
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 7.w),
+                  child: Text(
+                    "ECO : ${data.length}",
+                    style:
+                        TextStyle(fontSize: 14.sp, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Container(
+                  width: data.length < 8 ? 100.w : 100.0 * data.length,
+                  height: 50.h,
+                  child: SfCartesianChart(
+                      // title: ChartTitle(
+                      //     text: "          ECO : ${data.length}",
+                      //     alignment: ChartAlignment.near,
+                      //     textStyle: TextStyle(fontWeight: FontWeight.bold)),
+                      primaryXAxis: CategoryAxis(
+                        labelIntersectAction: AxisLabelIntersectAction.wrap,
+                      ),
+                      primaryYAxis: NumericAxis(
+                          minimum: 0,
+                          maximum: orderMap.values.reduce(max).toDouble(),
+                          interval: 1000),
+                      tooltipBehavior: _tooltip,
+                      series: <ChartSeries<_ChartData, String>>[
+                        ColumnSeries<_ChartData, String>(
+                            dataSource: data,
+                            xValueMapper: (_ChartData data, _) => data.x,
+                            yValueMapper: (_ChartData data, _) => data.y,
+                            name: 'Gold',
+                            color: Color.fromRGBO(8, 142, 255, 1))
+                      ]),
+                ),
+              ],
+            )),
           ),
         ),
       ],

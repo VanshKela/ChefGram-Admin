@@ -76,7 +76,6 @@ class _EditCatalogItemState extends State<EditCatalogItem> {
 
   @override
   void initState() {
-    print(widget.data);
     nameController = TextEditingController(text: widget.data['name']);
     priceController =
         TextEditingController(text: widget.data['price'].toString());
@@ -105,7 +104,7 @@ class _EditCatalogItemState extends State<EditCatalogItem> {
               child: Column(
                 children: [
                   Text(
-                    "Add Items to Catalog",
+                    "Edit Items in Catalog",
                     style: TextStyle(fontSize: 30.sp),
                   ),
                   SizedBox(
@@ -184,9 +183,9 @@ class _EditCatalogItemState extends State<EditCatalogItem> {
                     child: RoundedButton(
                       color: Color(0xFF004AAD),
                       onPressed: () {
-                        if (formGlobalKey.currentState!.validate() &&
-                            (image != null)) {
+                        if (formGlobalKey.currentState!.validate()) {
                           formGlobalKey.currentState!.save();
+
                           Loader.show(context);
                           addToCatalog();
                           Navigator.pop(context, true);

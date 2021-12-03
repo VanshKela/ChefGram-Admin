@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:chef_gram_admin/models/profile_model.dart';
-import 'package:chef_gram_admin/screens/auth/register_employee.dart';
+import 'package:chef_gram_admin/screens/Dashboard/take_order.dart';
 import 'package:chef_gram_admin/utils/graphs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,7 +15,7 @@ import '../../main.dart';
 import 'add_beat.dart';
 import 'add_shops.dart';
 import 'daily_target_list.dart';
-import 'delete_shop.dart';
+import 'manage_shop.dart';
 import 'employee_list.dart';
 import 'orders.dart';
 import 'catalog.dart';
@@ -30,7 +30,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   List orderData = [];
   bool isDataFetched = false;
-
+  late String appVerison;
   List<Widget> targetDailyWidgetList = [];
   Map<String, dynamic> employeeSalesMap = {};
   void calculateSales() async {
@@ -142,6 +142,16 @@ class _DashboardState extends State<Dashboard> {
                     },
                   ),
                   ListTile(
+                    leading: Icon(Icons.add),
+                    title: Text('Take Order',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => TakeOrder()));
+                    },
+                  ),
+                  ListTile(
                     leading: Icon(Icons.people),
                     title: Text('Employee List',
                         style: TextStyle(fontWeight: FontWeight.bold)),
@@ -164,7 +174,7 @@ class _DashboardState extends State<Dashboard> {
                     },
                   ),
                   ListTile(
-                    leading: Icon(Icons.house),
+                    leading: Icon(Icons.home),
                     title: Text('Add Shops',
                         style: TextStyle(fontWeight: FontWeight.bold)),
                     onTap: () {
@@ -174,8 +184,8 @@ class _DashboardState extends State<Dashboard> {
                     },
                   ),
                   ListTile(
-                    leading: Icon(Icons.delete),
-                    title: Text('Delete Shops',
+                    leading: Icon(Icons.edit),
+                    title: Text('Delete/Edit Shops',
                         style: TextStyle(fontWeight: FontWeight.bold)),
                     onTap: () {
                       Navigator.pop(context);
