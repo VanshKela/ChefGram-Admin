@@ -36,23 +36,25 @@ class _StatsPageState extends State<StatsPage> {
   void getExcel() async {
     final xlsio.Workbook workbook = new xlsio.Workbook();
     xlsio.Worksheet sheet = workbook.worksheets[0];
-    sheet.getRangeByIndex(1, 1).setText('Unique ID');
-    sheet.getRangeByIndex(1, 2).setText('Shop Name');
-    sheet.getRangeByIndex(1, 3).setText('Customer Name');
-    sheet.getRangeByIndex(1, 4).setText('State');
-    sheet.getRangeByIndex(1, 5).setText('City');
-    sheet.getRangeByIndex(1, 6).setText('Beat');
-    sheet.getRangeByIndex(1, 7).setText('Address');
-    sheet.getRangeByIndex(1, 8).setText('Order Taken By');
-    sheet.getRangeByIndex(1, 9).setText('Date Time');
-    sheet.getRangeByIndex(1, 10).setText('Item');
-    sheet.getRangeByIndex(1, 11).setText('Quantity (gm)');
-    sheet.getRangeByIndex(1, 12).setText('Boxes');
-    sheet.getRangeByIndex(1, 13).setText('Price');
-    sheet.getRangeByIndex(1, 14).setText('Total');
+    sheet.getRangeByIndex(1, 1).setText('Unique Order ID');
+    sheet.getRangeByIndex(1, 2).setText('Unique Shop ID');
+    sheet.getRangeByIndex(1, 3).setText('Shop Name');
+    sheet.getRangeByIndex(1, 4).setText('Customer Name');
+    sheet.getRangeByIndex(1, 5).setText('State');
+    sheet.getRangeByIndex(1, 6).setText('City');
+    sheet.getRangeByIndex(1, 7).setText('Beat');
+    sheet.getRangeByIndex(1, 8).setText('Address');
+    sheet.getRangeByIndex(1, 9).setText('Order Taken By');
+    sheet.getRangeByIndex(1, 10).setText('Date Time');
+    sheet.getRangeByIndex(1, 11).setText('Item');
+    sheet.getRangeByIndex(1, 12).setText('Quantity (gm)');
+    sheet.getRangeByIndex(1, 13).setText('Boxes');
+    sheet.getRangeByIndex(1, 14).setText('Price');
+    sheet.getRangeByIndex(1, 15).setText('Total');
 
     int row = 2;
     widget.orderData.forEach((order) {
+      String orderId = order.id;
       String shopId = order.get('shopId');
       String shopName = order.get('shopName');
       String customerName = order.get('customerName');
@@ -64,23 +66,24 @@ class _StatsPageState extends State<StatsPage> {
       DateTime dateTime = order.get('dateTime').toDate();
       List items = order.get('items');
       for (int i = 0; i < items.length; i++) {
-        sheet.getRangeByIndex(row, 1).setText(shopId);
-        sheet.getRangeByIndex(row, 2).setText(shopName);
-        sheet.getRangeByIndex(row, 3).setText(customerName);
-        sheet.getRangeByIndex(row, 4).setText(state);
-        sheet.getRangeByIndex(row, 5).setText(city);
-        sheet.getRangeByIndex(row, 6).setText(beat);
-        sheet.getRangeByIndex(row, 7).setText(address);
-        sheet.getRangeByIndex(row, 8).setText(orderTakenBy);
-        sheet.getRangeByIndex(row, 9).setDateTime(dateTime);
-        sheet.getRangeByIndex(row, 10).setText(items[i]['name']);
+        sheet.getRangeByIndex(row, 1).setText(orderId);
+        sheet.getRangeByIndex(row, 2).setText(shopId);
+        sheet.getRangeByIndex(row, 3).setText(shopName);
+        sheet.getRangeByIndex(row, 4).setText(customerName);
+        sheet.getRangeByIndex(row, 5).setText(state);
+        sheet.getRangeByIndex(row, 6).setText(city);
+        sheet.getRangeByIndex(row, 7).setText(beat);
+        sheet.getRangeByIndex(row, 8).setText(address);
+        sheet.getRangeByIndex(row, 9).setText(orderTakenBy);
+        sheet.getRangeByIndex(row, 10).setDateTime(dateTime);
+        sheet.getRangeByIndex(row, 11).setText(items[i]['name']);
         sheet
-            .getRangeByIndex(row, 11)
+            .getRangeByIndex(row, 12)
             .setText((items[i]['quantity']).toString());
-        sheet.getRangeByIndex(row, 12).setText((items[i]['boxes']).toString());
-        sheet.getRangeByIndex(row, 13).setText((items[i]['price']).toString());
+        sheet.getRangeByIndex(row, 13).setText((items[i]['boxes']).toString());
+        sheet.getRangeByIndex(row, 14).setText((items[i]['price']).toString());
         sheet
-            .getRangeByIndex(row, 14)
+            .getRangeByIndex(row, 15)
             .setText((items[i]['boxes'] * items[i]['price']).toString());
         row++;
       }
